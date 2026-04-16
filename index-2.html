@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hridik - Robotics & Controls Engineer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #0a0e27;
+            --secondary: #1a1f3a;
+            --accent: #00d4ff;
+            --accent-alt: #ff006e;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b8c8;
+            --border: #2a3050;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'IBM Plex Mono', monospace;
+            background: linear-gradient(135deg, var(--primary) 0%, #0f1535 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+            font-weight: 600;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 2rem;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(255, 0, 110, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 900px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .profile-image {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            margin: 0 auto 2rem;
+            border: 3px solid var(--accent);
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(90deg, var(--accent), var(--accent-alt));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .hero .cta {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--border);
+            background: transparent;
+            color: var(--text-primary);
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.75rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--primary);
+            border-color: var(--accent);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.2);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Section Layout */
+        section {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        section h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-alt));
+        }
+
+        /* Experience Section */
+        .experience-grid {
+            display: grid;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .experience-card {
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+        .experience-card:nth-child(1) { animation-delay: 0.1s; }
+        .experience-card:nth-child(2) { animation-delay: 0.2s; }
+
+        .experience-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .exp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .exp-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        .exp-period {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .exp-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .exp-list {
+            list-style: none;
+            space-y: 0.75rem;
+        }
+
+        .exp-list li {
+            margin-bottom: 0.75rem;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .exp-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* Projects Section */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .project-card {
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out backwards;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-card:nth-child(1) { animation-delay: 0.1s; }
+        .project-card:nth-child(2) { animation-delay: 0.2s; }
+        .project-card:nth-child(3) { animation-delay: 0.3s; }
+        .project-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .project-card:hover {
+            border-color: var(--accent-alt);
+            box-shadow: 0 10px 30px rgba(255, 0, 110, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .project-card:hover .project-title {
+            color: var(--accent-alt);
+        }
+
+        .project-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .project-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .project-tag {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--accent);
+            padding: 0.35rem 0.7rem;
+            border-radius: 2px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .project-tag.alt {
+            background: rgba(255, 0, 110, 0.1);
+            color: var(--accent-alt);
+        }
+
+        .project-description {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            flex-grow: 1;
+            line-height: 1.6;
+        }
+
+        .project-highlights {
+            list-style: none;
+            font-size: 0.85rem;
+        }
+
+        .project-highlights li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.2rem;
+            position: relative;
+            color: var(--text-secondary);
+        }
+
+        .project-highlights li::before {
+            content: '◆';
+            position: absolute;
+            left: 0;
+            color: var(--accent-alt);
+            font-size: 0.6rem;
+        }
+
+        .project-link {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .project-link a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .project-link a:hover {
+            color: var(--accent-alt);
+            gap: 1rem;
+        }
+
+        /* Skills Section */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .skill-category {
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+        .skill-category:nth-child(1) { animation-delay: 0.1s; }
+        .skill-category:nth-child(2) { animation-delay: 0.2s; }
+        .skill-category:nth-child(3) { animation-delay: 0.3s; }
+        .skill-category:nth-child(4) { animation-delay: 0.4s; }
+        .skill-category:nth-child(5) { animation-delay: 0.5s; }
+
+        .skill-category:hover {
+            border-color: var(--accent);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.1);
+        }
+
+        .skill-name {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .skill-items {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .skill-item {
+            background: rgba(0, 212, 255, 0.08);
+            color: var(--text-secondary);
+            padding: 0.4rem 0.8rem;
+            border-radius: 2px;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .skill-item:hover {
+            background: rgba(0, 212, 255, 0.15);
+            color: var(--accent);
+        }
+
+        /* Education Section */
+        .education-card {
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 4px;
+            margin-bottom: 2rem;
+        }
+
+        .education-card h3 {
+            font-family: 'Syne', sans-serif;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .education-card p {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .coursework {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Contact Section */
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .contact-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .contact-icon {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 1.2rem;
+            min-width: 30px;
+        }
+
+        .contact-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .contact-label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.3rem;
+        }
+
+        .contact-value {
+            color: var(--accent);
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+        }
+
+        .contact-value a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-value a:hover {
+            color: var(--accent-alt);
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.75rem;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--secondary);
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        footer p {
+            margin-bottom: 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .social-links a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .social-links a:hover {
+            color: var(--accent-alt);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero .subtitle {
+                font-size: 1rem;
+            }
+
+            section h2 {
+                font-size: 1.8rem;
+            }
+
+            .contact-content {
+                grid-template-columns: 1fr;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 3rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">Hridik</div>
+        <ul>
+            <li><a href="#experience">Experience</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#education">Education</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="profile-image">
+                <img src="profile.jpg" alt="Hridik">
+            </div>
+            <h1>Robotics & <span>Controls Engineer</span></h1>
+            <p class="subtitle">Computer Engineering Student | UIUC | Specializing in Embedded Systems, Control Theory & Autonomous Systems</p>
+            <div class="cta">
+                <a href="#projects" class="btn btn-primary">View Work</a>
+                <a href="#contact" class="btn">Get In Touch</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience">
+        <h2>Experience</h2>
+        <div class="experience-grid">
+            <div class="experience-card">
+                <div class="exp-header">
+                    <div class="exp-title">AI Software Developer Intern</div>
+                    <div class="exp-period">Summer 2024</div>
+                </div>
+                <div class="exp-subtitle">HealthArk Insights | Remote</div>
+                <ul class="exp-list">
+                    <li>Developed and deployed machine learning pipelines for healthcare data analysis</li>
+                    <li>Collaborated with cross-functional teams on software delivery and system validation</li>
+                    <li>Worked in agile environment with focus on reproducible, production-grade code</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects">
+        <h2>Featured Projects</h2>
+        <div class="projects-grid">
+            <div class="project-card">
+                <div class="project-title">Reaction Wheel Inverted Pendulum Control</div>
+                <div class="project-meta">
+                    <span class="project-tag">2024-2025</span>
+                    <span class="project-tag alt">Control Systems</span>
+                </div>
+                <p class="project-description">
+                    Designed and implemented advanced control systems for inverted pendulum equilibrium and swing-up maneuvers.
+                </p>
+                <ul class="project-highlights">
+                    <li>LQR optimal controller design with pole placement feedback</li>
+                    <li>Luenberger state observer for full-state estimation</li>
+                    <li>Energy-based swing-up control strategy with real-time DSP validation on TI C2000 board</li>
+                    <li>MATLAB/Simulink simulation and hardware-in-the-loop validation</li>
+                </ul>
+                <div class="project-link">
+                    <a href="https://github.com/HridikH/portfolio/tree/main/PROJECT_2" target="_blank">View on GitHub →</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-title">3-DOF Robot Arm Hybrid Force/Position Control</div>
+                <div class="project-meta">
+                    <span class="project-tag">2025</span>
+                    <span class="project-tag alt">Robotics</span>
+                </div>
+                <p class="project-description">
+                    Task-space control system for multi-DOF robotic arm with simultaneous trajectory tracking and force regulation.
+                </p>
+                <ul class="project-highlights">
+                    <li>Task-space PID controllers with hybrid force/position framework</li>
+                    <li>Feedback linearization for nonlinear robot dynamics</li>
+                    <li>MATLAB trajectory planners; navigated 6-step obstacle course under 25 seconds</li>
+                    <li>Real-time hardware deployment and validation on CRS 3-DOF arm</li>
+                </ul>
+                <div class="project-link">
+                    <a href="https://github.com/HridikH/portfolio/tree/main/projects/robot-arm-control" target="_blank">View on GitHub →</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-title">UR3 Vision-Guided Pick-and-Place</div>
+                <div class="project-meta">
+                    <span class="project-tag">2025</span>
+                    <span class="project-tag alt">Computer Vision</span>
+                </div>
+                <p class="project-description">
+                    Autonomous manipulation system integrating inverse kinematics with real-time visual feedback for robust object handling.
+                </p>
+                <ul class="project-highlights">
+                    <li>UR3 IK solver using product-of-exponentials (PoE) formulation</li>
+                    <li>OpenCV pipeline for pose estimation, object detection, and recognition</li>
+                    <li>Closed-loop vision-guided manipulation with camera-to-robot calibration</li>
+                    <li>3D pose tracking validation in cluttered workspaces</li>
+                </ul>
+                <div class="project-link">
+                    <a href="https://github.com/HridikH/portfolio/tree/main/projects/ur3-vision-manipulation" target="_blank">View on GitHub →</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-title">Operating System Kernel Development</div>
+                <div class="project-meta">
+                    <span class="project-tag">2024-2025</span>
+                    <span class="project-tag alt">Systems</span>
+                </div>
+                <p class="project-description">
+                    Full-featured OS kernel implementation covering filesystem, threading, synchronization, and device drivers for RISC-V 64-bit.
+                </p>
+                <ul class="project-highlights">
+                    <li>NGFS FAT-like filesystem with complete I/O operations (fetch, store, ioctl, create, delete, flush)</li>
+                    <li>Kernel threading with context switching, condition variables, reader-writer locks</li>
+                    <li>VirtIO block device driver, timer/alarm system with sorted linked lists</li>
+                    <li>Block cache with LRU eviction and VirtIO RNG kernel-buffer driver</li>
+                </ul>
+                <div class="project-link">
+                    <a href="https://github.com/HridikH/portfolio/tree/main/projects/os-kernel-development" target="_blank">View on GitHub →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills">
+        <h2>Technical Skills</h2>
+        <div class="skills-grid">
+            <div class="skill-category">
+                <div class="skill-name">Robotics & Control Systems</div>
+                <ul class="skill-items">
+                    <li class="skill-item">PID Control</li>
+                    <li class="skill-item">Hybrid Control</li>
+                    <li class="skill-item">Trajectory Planning</li>
+                    <li class="skill-item">Inverse Kinematics</li>
+                    <li class="skill-item">LQR Control</li>
+                    <li class="skill-item">State Observers</li>
+                    <li class="skill-item">Feedback Linearization</li>
+                </ul>
+            </div>
+
+            <div class="skill-category">
+                <div class="skill-name">Programming & Simulation</div>
+                <ul class="skill-items">
+                    <li class="skill-item">MATLAB/Simulink</li>
+                    <li class="skill-item">C</li>
+                    <li class="skill-item">Python</li>
+                    <li class="skill-item">RISC-V Assembly</li>
+                    <li class="skill-item">SystemVerilog</li>
+                    <li class="skill-item">Real-Time OS</li>
+                </ul>
+            </div>
+
+            <div class="skill-category">
+                <div class="skill-name">Computer Vision & Sensing</div>
+                <ul class="skill-items">
+                    <li class="skill-item">OpenCV</li>
+                    <li class="skill-item">Pose Estimation</li>
+                    <li class="skill-item">Object Detection</li>
+                    <li class="skill-item">Camera Calibration</li>
+                    <li class="skill-item">3D Tracking</li>
+                    <li class="skill-item">Sensor Integration</li>
+                </ul>
+            </div>
+
+            <div class="skill-category">
+                <div class="skill-name">Hardware & Embedded</div>
+                <ul class="skill-items">
+                    <li class="skill-item">FPGA Design</li>
+                    <li class="skill-item">Vivado RTL</li>
+                    <li class="skill-item">Microcontroller</li>
+                    <li class="skill-item">ARM Cortex</li>
+                    <li class="skill-item">Real-Time Systems</li>
+                    <li class="skill-item">Hardware Debugging</li>
+                </ul>
+            </div>
+
+            <div class="skill-category">
+                <div class="skill-name">Systems & Deployment</div>
+                <ul class="skill-items">
+                    <li class="skill-item">Kernel Development</li>
+                    <li class="skill-item">File Systems</li>
+                    <li class="skill-item">Synchronization</li>
+                    <li class="skill-item">Device Drivers</li>
+                    <li class="skill-item">Cross-Functional Teams</li>
+                    <li class="skill-item">Technical Documentation</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education Section -->
+    <section id="education">
+        <h2>Education</h2>
+        <div class="education-card">
+            <h3>Bachelor of Science in Computer Engineering</h3>
+            <p>University of Illinois at Urbana-Champaign | Champaign, IL</p>
+            <p style="color: var(--accent);">Graduation: May 2027</p>
+            <p>Minor: Mathematics</p>
+            <div class="coursework">
+                <strong>Relevant Coursework:</strong><br>
+                ECE 470 (Introduction to Robotics), ECE 489 (Robot Dynamics and Control), ECE 486 (Control Systems), ECE 385 (FPGA Design), ECE 391 (Operating Systems)
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <h2>Get In Touch</h2>
+        <div class="contact-content">
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div class="contact-text">
+                        <div class="contact-label">Location</div>
+                        <div class="contact-value">Champaign, Illinois</div>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">✉️</div>
+                    <div class="contact-text">
+                        <div class="contact-label">Email</div>
+                        <div class="contact-value"><a href="mailto:hridikh2@illinois.edu">hridikh2@illinois.edu</a></div>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">💼</div>
+                    <div class="contact-text">
+                        <div class="contact-label">LinkedIn</div>
+                        <div class="contact-value"><a href="https://linkedin.com/in/HridikH" target="_blank">linkedin.com/in/HridikH</a></div>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">🔗</div>
+                    <div class="contact-text">
+                        <div class="contact-label">GitHub</div>
+                        <div class="contact-value"><a href="https://github.com/hridik" target="_blank">github.com/hridik</a></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form">
+                <form onsubmit="handleSubmit(event)">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="social-links">
+            <a href="https://linkedin.com/in/HridikH" target="_blank">LinkedIn</a>
+            <a href="https://github.com/hridik" target="_blank">GitHub</a>
+            <a href="mailto:hridikh2@illinois.edu">Email</a>
+        </div>
+        <p>&copy; 2025 Hridik. Computer Engineering Student @ UIUC</p>
+        <p style="font-size: 0.75rem; color: var(--text-secondary);">Robotics • Controls • Embedded Systems • OS Development</p>
+    </footer>
+
+    <script>
+        // Smooth scroll behavior is handled by CSS
+        // Form handling
+        function handleSubmit(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+
+            // Create mailto link
+            const subject = encodeURIComponent('Portfolio Contact');
+            const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
+            window.location.href = `mailto:hridikh2@illinois.edu?subject=${subject}&body=${body}`;
+        }
+
+        // Navbar active state
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', function() {
+                document.querySelectorAll('nav a').forEach(a => a.style.color = 'var(--text-secondary)');
+                this.style.color = 'var(--accent)';
+            });
+        });
+    </script>
+</body>
+</html>
