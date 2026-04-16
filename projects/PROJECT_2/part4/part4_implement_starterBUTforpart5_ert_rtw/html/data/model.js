@@ -1,0 +1,1 @@
+var modelInfo = {model:"part4_implement_starterBUTforpart5"};var modelHierarchy=[{model:"part4_implement_starterBUTforpart5",relativePath:"_internal.html",parent:"null"},];var AddCode = true;var ProtectedModel = false;
