@@ -1,0 +1,72 @@
+%% idea:  use a coeff fit to get nice derivatives
+% This function takes a cubic fit of the initial data for both 
+% Theta_p and Theta_r.  Having a cubic fit is better than 
+% trying to take the derivative of noisy data for many reasons.
+% The function easily computes the first and second derivatives. 
+
+  
+% It does requires you to do two things:
+% 
+% 1.) enter your u constant step value, a (=omega_np^2), b, and c
+% 2.) Come up with the equation for br and bp
+
+% Run this function with the data you log when running Part3.slx,  Type the following:
+% time_Reac = ReacData(:,1);
+% th_p_Reac = ReacData(:,2);
+% th_r_Reac = ReacData(:,3);
+% u_Reac = ReacData(:,4);
+% [bpMax, brMax] = Find_bp_and_br(time_Reac,th_p_Reac,th_r_Reac,u_Reac)
+
+function [bpMax, brMax] = Find_bp_and_br(plot_time, Theta_p,Theta_r,uinput)
+%% plot the data
+start = find(uinput>4, 1);
+Theta_p = Theta_p(start:end);
+Theta_r = Theta_r(start:end);
+plot_time = plot_time(start:end)- plot_time(start);
+%figure
+%plot(plot_time,Theta_p)
+%figure
+%plot(plot_time,Theta_r)
+figure
+[s,i] = min(Theta_p) % we only want the data from zero to the first minimum
+indexes = 1:i;
+plot(plot_time(indexes),Theta_p(indexes))
+
+t = plot_time(indexes);
+%first get a fit for the theta_p data ('D' stands for 1st derivative,
+%'DD' for second derivative)
+coeffs = polyfit(plot_time(indexes),Theta_p(indexes),3);
+p = coeffs(1).*t.^3+coeffs(2).*t.^2+coeffs(3).*t.^1+coeffs(4).*t.^0;
+pD = 3*coeffs(1).*t.^2+2*coeffs(2).*t.^1+coeffs(3).*t.^0;
+pDD =  6*coeffs(1).*t.^1+2*coeffs(2).*t.^0;
+%next get fir
+coeffs = polyfit(plot_time(indexes),Theta_r(indexes),3);
+r = coeffs(1).*t.^3+coeffs(2).*t.^2+coeffs(3).*t.^1+coeffs(4).*t.^0;
+rD = 3*coeffs(1).*t.^2+2*coeffs(2).*t.^1+coeffs(3).*t.^0;
+rDD = 6*coeffs(1).*t.^1+2*coeffs(2).*t.^0;
+
+%% 1.) Put your values here:
+u = 5;  %this is the scaler value of your step.  Probably 5
+a =8.53696^2 ;% a = (omega_np^2)
+b =0.012091891891892 ;
+c = 0.55;
+
+%% 2.) actually find the bp and br values
+% You need to fill this in yourself.  Use the variables p, pD,pDD and
+% r, rD, rDD.  Remember that u+F(rD) < u  
+bp = -(pDD+a*sin(pD)/(u-b*rD-c)) ;
+br = rDD/(u-b*rD-c);
+
+%returned values
+bpMax = max(bp);
+brMax = max(br);
+% Do the plotting
+subplot(2,1,1)
+plot(t,bp)
+legend(['b_p max is ',num2str(bpMax)])
+title([num2str(bpMax/1.08*100),'% of the predicted val'])
+subplot(2,1,2)
+plot(t,br)
+legend(['b_r max is ',num2str(brMax)])
+title([num2str(brMax/198*100),'% of the predicted val'])
+
