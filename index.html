@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hridik Hingorani — Robotics & Controls Engineer</title>
+<meta name="description" content="Hridik Hingorani — Computer Engineering student at UIUC (Class of 2027). Robotics & controls, FPGA design, embedded systems, PCB design. Open to Fall 2026 co-op/internship.">
+<meta name="keywords" content="Hridik Hingorani, robotics, controls, FPGA, embedded systems, UIUC, computer engineering, PCB design, ROS, machine learning">
+<meta name="author" content="Hridik Hingorani">
+<meta property="og:title" content="Hridik Hingorani — Robotics & Controls Engineer">
+<meta property="og:description" content="Computer Engineer. Robotics & Controls. Builder of things that move.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0d0d;
+  --text:#f5f5f5;
+  --muted:#9a9a9a;
+  --purple:#7c3aed;
+  --teal:#14b8a6;
+  --card:#151515;
+  --border:#262626;
+  --mono:'Courier New',Courier,monospace;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  line-height:1.6;
+  overflow-x:hidden;
+}
+::selection{background:var(--purple);color:#fff}
+
+/* ============ SCROLL THREAD ============ */
+#thread-svg{
+  position:fixed;
+  top:0;left:0;
+  width:100vw;height:100vh;
+  z-index:0;
+  pointer-events:none;
+}
+#thread-path{
+  fill:none;
+  stroke:url(#threadGrad);
+  stroke-width:2.5;
+  stroke-linecap:round;
+  opacity:.85;
+}
+#thread-dot{
+  fill:#fff;
+  filter:drop-shadow(0 0 6px var(--purple)) drop-shadow(0 0 14px var(--teal));
+  animation:pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{r:4;opacity:1}
+  50%{r:6.5;opacity:.7}
+}
+
+main,nav,footer{position:relative;z-index:1}
+
+/* ============ NAV ============ */
+nav{
+  position:fixed;
+  top:0;left:0;right:0;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:1rem 2rem;
+  background:rgba(13,13,13,.8);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.logo{
+  font-family:var(--mono);
+  font-weight:700;
+  font-size:1.2rem;
+  letter-spacing:.05em;
+  color:var(--text);
+  text-decoration:none;
+  border:2px solid var(--purple);
+  padding:.15rem .5rem;
+  transition:all .25s;
+}
+.logo:hover{background:var(--purple);box-shadow:0 0 18px rgba(124,58,237,.5)}
+.nav-links{display:flex;gap:1.75rem;list-style:none}
+.nav-links a{
+  color:var(--muted);
+  text-decoration:none;
+  font-size:.85rem;
+  font-weight:500;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  transition:color .2s;
+}
+.nav-links a:hover{color:var(--teal)}
+#hamburger{
+  display:none;
+  background:none;border:none;cursor:pointer;
+  flex-direction:column;gap:5px;padding:6px;
+}
+#hamburger span{
+  display:block;width:24px;height:2px;
+  background:var(--text);
+  transition:all .3s;
+}
+#hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+#hamburger.open span:nth-child(2){opacity:0}
+#hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+@media(max-width:768px){
+  #hamburger{display:flex}
+  .nav-links{
+    position:absolute;
+    top:100%;left:0;right:0;
+    flex-direction:column;
+    gap:0;
+    background:rgba(13,13,13,.97);
+    border-bottom:1px solid var(--border);
+    max-height:0;overflow:hidden;
+    transition:max-height .35s ease;
+  }
+  .nav-links.open{max-height:400px}
+  .nav-links li{padding:.9rem 2rem;border-top:1px solid var(--border)}
+}
+
+/* ============ LAYOUT / TYPE ============ */
+section{
+  max-width:1100px;
+  margin:0 auto;
+  padding:7rem 2rem 5rem;
+}
+.section-heading{
+  font-size:clamp(48px,9vw,96px);
+  font-weight:900;
+  line-height:1.02;
+  letter-spacing:-.03em;
+  margin-bottom:.5rem;
+  text-transform:uppercase;
+}
+.section-heading .accent{
+  background:linear-gradient(90deg,var(--purple),var(--teal));
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.section-label{
+  font-family:var(--mono);
+  font-size:.8rem;
+  color:var(--teal);
+  letter-spacing:.2em;
+  margin-bottom:1rem;
+  display:block;
+}
+.section-intro{color:var(--muted);max-width:560px;margin-bottom:3rem}
+
+/* fade-in on scroll */
+.fade-in{
+  opacity:0;
+  transform:translateY(28px);
+  transition:opacity .7s ease,transform .7s ease;
+}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+
+/* ============ HERO ============ */
+#hero{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding-top:8rem;
+}
+.hero-grid{
+  display:flex;
+  align-items:center;
+  gap:3.5rem;
+  flex-wrap:wrap;
+}
+.hero-text{flex:1 1 480px}
+.badge{
+  display:inline-block;
+  font-family:var(--mono);
+  font-size:.75rem;
+  color:var(--teal);
+  border:1px solid rgba(20,184,166,.45);
+  border-radius:999px;
+  padding:.3rem .9rem;
+  margin-bottom:1.6rem;
+  background:rgba(20,184,166,.07);
+}
+.badge::before{
+  content:'';
+  display:inline-block;
+  width:7px;height:7px;
+  border-radius:50%;
+  background:var(--teal);
+  margin-right:.5rem;
+  animation:blink 2s infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero-name{
+  font-size:clamp(52px,10vw,110px);
+  font-weight:900;
+  line-height:.98;
+  letter-spacing:-.035em;
+  text-transform:uppercase;
+  margin-bottom:1.4rem;
+}
+.hero-name .line{display:block;overflow:hidden}
+.hero-name .line span{
+  display:inline-block;
+  transform:translateY(110%);
+  animation:reveal .9s cubic-bezier(.22,1,.36,1) forwards;
+}
+.hero-name .line:nth-child(2) span{
+  animation-delay:.18s;
+  background:linear-gradient(90deg,var(--purple),var(--teal));
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+@keyframes reveal{to{transform:translateY(0)}}
+.tagline{
+  font-size:clamp(1.1rem,2.4vw,1.5rem);
+  font-weight:600;
+  margin-bottom:.6rem;
+  opacity:0;
+  animation:fadeUp .8s ease .6s forwards;
+}
+.subtext{
+  font-family:var(--mono);
+  color:var(--muted);
+  font-size:.9rem;
+  margin-bottom:2.2rem;
+  opacity:0;
+  animation:fadeUp .8s ease .75s forwards;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.hero-ctas{
+  display:flex;gap:1rem;flex-wrap:wrap;
+  margin-bottom:2rem;
+  opacity:0;animation:fadeUp .8s ease .9s forwards;
+}
+.btn{
+  display:inline-block;
+  padding:.8rem 1.7rem;
+  font-weight:600;
+  font-size:.9rem;
+  text-decoration:none;
+  border-radius:6px;
+  letter-spacing:.03em;
+  transition:all .25s;
+  cursor:pointer;
+  border:1px solid transparent;
+}
+.btn-primary{
+  background:var(--purple);color:#fff;
+}
+.btn-primary:hover{
+  background:#8b5cf6;
+  box-shadow:0 0 26px rgba(124,58,237,.55);
+  transform:translateY(-2px);
+}
+.btn-outline{
+  border-color:var(--border);color:var(--text);background:transparent;
+}
+.btn-outline:hover{
+  border-color:var(--teal);color:var(--teal);
+  box-shadow:0 0 18px rgba(20,184,166,.25);
+  transform:translateY(-2px);
+}
+.socials{
+  display:flex;gap:1.1rem;align-items:center;
+  opacity:0;animation:fadeUp .8s ease 1.05s forwards;
+}
+.socials a{
+  color:var(--muted);
+  transition:all .25s;
+  display:inline-flex;
+}
+.socials a:hover{color:var(--teal);transform:translateY(-3px)}
+.socials svg{width:22px;height:22px;fill:currentColor}
+
+.headshot-wrap{
+  flex:0 0 auto;
+  opacity:0;animation:fadeUp 1s ease .5s forwards;
+}
+.headshot{
+  width:min(280px,60vw);
+  height:min(280px,60vw);
+  border-radius:50%;
+  padding:5px;
+  background:linear-gradient(135deg,var(--purple),var(--teal));
+  box-shadow:0 0 60px rgba(124,58,237,.25);
+}
+.headshot-inner{
+  width:100%;height:100%;
+  border-radius:50%;
+  background:var(--card);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:.4rem;
+  overflow:hidden;
+}
+.headshot-inner img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.headshot-initials{
+  font-family:var(--mono);
+  font-size:3.4rem;font-weight:700;
+  background:linear-gradient(135deg,var(--purple),var(--teal));
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.headshot-note{font-family:var(--mono);font-size:.65rem;color:var(--muted)}
+
+/* ============ PROJECTS ============ */
+.project-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(310px,1fr));
+  gap:1.6rem;
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+  display:flex;flex-direction:column;
+  transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease;
+}
+.card:hover{
+  transform:translateY(-6px);
+  border-color:rgba(124,58,237,.6);
+  box-shadow:0 10px 40px rgba(124,58,237,.18),0 0 0 1px rgba(20,184,166,.15);
+}
+.card-media{
+  height:160px;
+  background:
+    linear-gradient(135deg,rgba(124,58,237,.12),rgba(20,184,166,.12)),
+    repeating-linear-gradient(45deg,transparent 0 14px,rgba(255,255,255,.025) 14px 28px);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:.7rem;color:var(--muted);
+  border-bottom:1px solid var(--border);
+  text-align:center;padding:0 1rem;
+}
+.card-media img,.card-media video{width:100%;height:100%;object-fit:cover}
+.card-body{padding:1.4rem;display:flex;flex-direction:column;gap:.8rem;flex:1}
+.card h3{font-size:1.15rem;font-weight:700;letter-spacing:-.01em}
+.card p{color:var(--muted);font-size:.88rem;flex:1}
+.tags{display:flex;flex-wrap:wrap;gap:.45rem}
+.tag{
+  font-family:var(--mono);
+  font-size:.68rem;
+  color:var(--teal);
+  background:rgba(20,184,166,.08);
+  border:1px solid rgba(20,184,166,.3);
+  border-radius:4px;
+  padding:.18rem .5rem;
+}
+.card-links{display:flex;gap:1rem}
+.card-links a{
+  font-family:var(--mono);
+  font-size:.75rem;
+  color:var(--purple);
+  text-decoration:none;
+  border-bottom:1px dashed rgba(124,58,237,.5);
+  transition:color .2s;
+}
+.card-links a:hover{color:var(--teal);border-color:var(--teal)}
+
+/* ============ EXPERIENCE ============ */
+.timeline{
+  position:relative;
+  margin-left:1rem;
+  padding-left:2.5rem;
+  border-left:2px solid var(--border);
+}
+.tl-item{position:relative;padding-bottom:3rem}
+.tl-item:last-child{padding-bottom:0}
+.tl-item::before{
+  content:'';
+  position:absolute;
+  left:calc(-2.5rem - 8px);
+  top:.35rem;
+  width:13px;height:13px;
+  border-radius:50%;
+  background:var(--bg);
+  border:3px solid var(--purple);
+  box-shadow:0 0 12px rgba(124,58,237,.6);
+}
+.tl-item:nth-child(even)::before{border-color:var(--teal);box-shadow:0 0 12px rgba(20,184,166,.6)}
+.tl-year{
+  font-family:var(--mono);
+  font-size:.75rem;
+  color:var(--teal);
+  letter-spacing:.15em;
+  display:block;
+  margin-bottom:.3rem;
+}
+.tl-item h3{font-size:1.2rem;font-weight:700}
+.tl-org{color:var(--purple);font-weight:600;font-size:.92rem;margin-bottom:.5rem}
+.tl-item p{color:var(--muted);font-size:.9rem;max-width:620px}
+
+/* ============ SKILLS ============ */
+.skill-groups{display:flex;flex-direction:column;gap:2.4rem}
+.skill-group h3{
+  font-family:var(--mono);
+  font-size:.8rem;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:1rem;
+  display:flex;align-items:center;gap:.8rem;
+}
+.skill-group h3::after{
+  content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,var(--border),transparent);
+}
+.pills{display:flex;flex-wrap:wrap;gap:.7rem}
+.pill{
+  font-family:var(--mono);
+  font-size:.82rem;
+  padding:.45rem 1rem;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:var(--card);
+  transition:all .25s;
+  cursor:default;
+}
+.pill:hover{
+  border-color:var(--purple);
+  color:var(--teal);
+  box-shadow:0 0 16px rgba(124,58,237,.3);
+  transform:translateY(-2px);
+}
+
+/* ============ WRITING ============ */
+#writing .bio{color:var(--muted);max-width:600px;margin-bottom:2rem;font-size:1.02rem}
+.pull-quote{
+  font-family:Georgia,'Times New Roman',serif;
+  font-style:italic;
+  font-size:clamp(1.5rem,3.6vw,2.4rem);
+  line-height:1.35;
+  max-width:760px;
+  margin:3rem 0;
+  padding-left:1.6rem;
+  border-left:3px solid var(--teal);
+  color:var(--text);
+}
+.writing-ctas{display:flex;gap:1rem;flex-wrap:wrap}
+
+/* ============ CONTACT ============ */
+#contact{text-align:center;padding-bottom:6rem}
+#contact .section-heading{margin-bottom:2.5rem}
+.email-card{
+  display:inline-flex;
+  align-items:center;
+  gap:1rem;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:1rem 1.5rem;
+  margin-bottom:2rem;
+  transition:border-color .3s,box-shadow .3s;
+}
+.email-card:hover{border-color:var(--teal);box-shadow:0 0 24px rgba(20,184,166,.2)}
+.email-card code{font-family:var(--mono);font-size:clamp(.85rem,2.5vw,1.05rem);color:var(--text)}
+#copy-btn{
+  background:var(--purple);
+  border:none;color:#fff;
+  font-family:var(--mono);
+  font-size:.72rem;
+  padding:.45rem .9rem;
+  border-radius:6px;
+  cursor:pointer;
+  transition:all .25s;
+  white-space:nowrap;
+}
+#copy-btn:hover{background:#8b5cf6;box-shadow:0 0 14px rgba(124,58,237,.5)}
+#contact .socials{justify-content:center;opacity:1;animation:none;margin-bottom:2rem}
+.location-note{
+  font-family:var(--mono);
+  font-size:.82rem;
+  color:var(--muted);
+}
+.location-note .open-tag{color:var(--teal)}
+
+footer{
+  text-align:center;
+  padding:2rem;
+  border-top:1px solid var(--border);
+  color:var(--muted);
+  font-family:var(--mono);
+  font-size:.75rem;
+}
+
+@media(max-width:768px){
+  section{padding:5rem 1.3rem 3.5rem}
+  #hero{padding-top:6rem}
+  .hero-grid{gap:2rem}
+  .timeline{margin-left:.3rem;padding-left:1.8rem}
+  .tl-item::before{left:calc(-1.8rem - 8px)}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ SCROLL THREAD SVG ============ -->
+<svg id="thread-svg" aria-hidden="true">
+  <defs>
+    <linearGradient id="threadGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="4000">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#14b8a6"/>
+    </linearGradient>
+  </defs>
+  <g id="thread-group">
+    <path id="thread-path" d=""/>
+    <circle id="thread-dot" r="5" cx="-100" cy="-100"/>
+  </g>
+</svg>
+
+<!-- ============ NAV ============ -->
+<nav>
+  <a href="#hero" class="logo">HH</a>
+  <button id="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#writing">Writing</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- ============ HERO ============ -->
+<section id="hero">
+  <div class="hero-grid">
+    <div class="hero-text">
+      <span class="badge">Available: Fall 2026</span>
+      <h1 class="hero-name">
+        <span class="line"><span>Hridik</span></span>
+        <span class="line"><span>Hingorani</span></span>
+      </h1>
+      <p class="tagline">Computer Engineer. Robotics &amp; Controls. Builder of things that move.</p>
+      <p class="subtext">UIUC Computer Engineering, Class of 2027 · Mathematics Minor</p>
+      <div class="hero-ctas">
+        <a href="#projects" class="btn btn-primary">View Projects</a>
+        <a href="Hridik_Hingorani_Resume.pdf" class="btn btn-outline" target="_blank" rel="noopener" download>Download Resume</a>
+        <a href="#contact" class="btn btn-outline">Contact Me</a>
+      </div>
+      <div class="socials">
+        <a href="https://github.com/HridikH/portfolio" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg viewBox="0 0 24 24"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.31.76-1.61-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.63-5.48 5.92.43.37.81 1.1.81 2.22l-.01 3.29c0 .31.21.69.83.57A12 12 0 0 0 12 .3z"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/hridikh/" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.55C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.72C24 .77 23.2 0 22.22 0z"/></svg>
+        </a>
+        <a href="mailto:hridikh2@illinois.edu" aria-label="Email">
+          <svg viewBox="0 0 24 24"><path d="M12 12.713 1.015 5.562A2 2 0 0 1 2 4h20a2 2 0 0 1 .985 1.562L12 12.713zM12 15.087 0 7.275V20a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V7.275l-12 7.812z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="headshot-wrap">
+      <div class="headshot">
+        <div class="headshot-inner" id="headshot-slot">
+          <img src="headshot.jpg" alt="Hridik Hingorani">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROJECTS ============ -->
+<section id="projects">
+  <span class="section-label fade-in">// 01 — work</span>
+  <h2 class="section-heading fade-in">Pro<span class="accent">jects</span></h2>
+  <p class="section-intro fade-in">Robots that balance, arms that see, kernels from scratch. A selection of things I've designed, soldered, and shipped.</p>
+
+  <div class="project-grid">
+
+    <div class="card fade-in">
+      <div class="card-media" data-project="Animatronic Grogu">[ media: Animatronic Grogu ]</div>
+      <div class="card-body">
+        <h3>Animatronic Grogu (Baby Yoda)</h3>
+        <p>ECE 445 capstone. AI/voice integration (local LLM + Claude API, Whisper STT, Coqui TTS), servo-driven facial expressions, custom PCB power distribution, and mechanical enclosure design.</p>
+        <div class="tags"><span class="tag">Python</span><span class="tag">C++</span><span class="tag">KiCad</span><span class="tag">ROS</span><span class="tag">LLM</span></div>
+        <div class="card-links"><a href="https://github.com/HridikH/portfolio" target="_blank" rel="noopener">GitHub →</a></div>
+      </div>
+    </div>
+
+    <div class="card fade-in">
+      <div class="card-media" data-project="Spherical BB-8 Robot">[ media: BB-8 Robot ]</div>
+      <div class="card-body">
+        <h3>Spherical BB-8 Robot</h3>
+        <p>Reaction-wheel balancing with IMU-based stabilization. SolidWorks mechanical design and embedded motor control for a fully spherical drive system.</p>
+        <div class="tags"><span class="tag">C++</span><span class="tag">IMU</span><span class="tag">SolidWorks</span><span class="tag">Embedded</span></div>
+        <div class="card-links"><a href="https://github.com/HridikH/portfolio" target="_blank" rel="noopener">GitHub →</a></div>
+      </div>
+    </div>
+
+    <div class="card fade-in">
+      <div class="card-media" data-project="UR3 Vision-Guided Manipulation">
+        <video src="ur3.mp4" poster="ur3-poster.jpg" controls muted playsinline preload="metadata"></video>
+      </div>
+      <div class="card-body">
+        <h3>UR3 Vision-Guided Manipulation</h3>
+        <p>OpenCV pipeline for object detection and pick-and-place with sub-5mm accuracy. ROS integration and real-time pose estimation on a UR3 arm.</p>
+        <div class="tags"><span class="tag">Python</span><span class="tag">ROS</span><span class="tag">OpenCV</span><span class="tag">C++</span></div>
+        <div class="card-links"><a href="https://github.com/HridikH/portfolio" target="_blank" rel="noopener">GitHub →</a></div>
+      </div>
+    </div>
+
+    <div class="card fade-in">
+      <div class="card-media" data-project="3-DOF CRS Arm">
+        <video src="crs-arm.mp4" poster="crs-arm-poster.jpg" controls muted playsinline preload="metadata"></video>
+      </div>
+      <div class="card-body">
+        <h3>3-DOF CRS Arm</h3>
+        <p>Hybrid force/position control with task-space impedance control and a Jacobian transpose control law. Multi-stage waypoint trajectory: peg insertion, zig-zag navigation, egg pushing.</p>
+        <div class="tags"><span class="tag">MATLAB</span><span class="tag">ROS</span><span class="tag">Control Theory</span></div>
+        <div class="card-links"><a href="https://github.com/HridikH/portfolio" target="_blank" rel="noopener">GitHub →</a></div>
+      </div>
+    </div>
+
+    <div class="card fade-in">
+      <div class="card-media" data-project="LQR Inverted Pendulum">
+        <video src="pendulum.mp4" poster="pendulum-poster.jpg" controls muted playsinline preload="metadata"></video>
+      </div>
+      <div class="card-body">
+        <h3>LQR Inverted Pendulum</h3>
+        <p>Full-state feedback LQR controller for real-time stabilization. MATLAB simulation validated against a hardware implementation.</p>
+        <div class="tags"><span class="tag">MATLAB</span><span class="tag">Control Theory</span><span class="tag">Embedded</span></div>
+        <div class="card-links"><a href="https://github.com/HridikH/portfolio" target="_blank" rel="noopener">GitHub →</a></div>
+      </div>
+    </div>
+
+    <div class="card fade-in">
+      <div class="card-media" data-project="Jarvis Voice Assistant">
+        <video src="jarvis.mp4" poster="jarvis-poster.jpg" controls playsinline preload="metadata"></video>
+      </div>
+      <div class="card-body">
+        <h3>Jarvis Voice Assistant</h3>
+        <p>Local LLM + Claude API hybrid with Whisper STT, Coqui TTS, wake-word detection, and a modular tool-use architecture.</p>
+        <div class="tags"><span class="tag">Python</span><span class="tag">LLM</span><span class="tag">Claude API</span><span class="tag">Whisper</span></div>
+        <div class="card-links"><a href="https://github.com/HridikH/portfolio" target="_blank" rel="noopener">GitHub →</a></div>
+      </div>
+    </div>
+
+    <div class="card fade-in">
+      <div class="card-media" data-project="We_Are_Kernel">
+        <img src="kernel-terminal.svg" alt="We_Are_Kernel shell — Ulta-Pulta OS running the date command">
+      </div>
+      <div class="card-body">
+        <h3>OS Kernel — We_Are_Kernel</h3>
+        <p>RISC-V kernel from scratch: Sv39 paging, VirtIO, FAT filesystem, fork/exec/exit, pipes, a shell with I/O redirection, and preemptive multitasking.</p>
+        <div class="tags"><span class="tag">C</span><span class="tag">RISC-V</span><span class="tag">Systems</span></div>
+        <div class="card-links"><a href="https://github.com/HridikH/portfolio" target="_blank" rel="noopener">GitHub →</a></div>
+      </div>
+    </div>
+
+    <div class="card fade-in">
+      <div class="card-media" data-project="EEG PCB">[ media: EEG PCB ]</div>
+      <div class="card-body">
+        <h3>EEG PCB</h3>
+        <p>Single-layer KiCad PCB for EEG signal acquisition — analog front-end design for the NeuroTechXUIUC research platform feeding a biomedical ML pipeline.</p>
+        <div class="tags"><span class="tag">KiCad</span><span class="tag">PCB</span><span class="tag">EEG</span><span class="tag">Biomedical</span></div>
+        <div class="card-links"><a href="https://github.com/HridikH/portfolio" target="_blank" rel="noopener">GitHub →</a></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ EXPERIENCE ============ -->
+<section id="experience">
+  <span class="section-label fade-in">// 02 — history</span>
+  <h2 class="section-heading fade-in">Exper<span class="accent">ience</span></h2>
+  <p class="section-intro fade-in">Teaching, research, and industry — in roughly reverse chronological order.</p>
+
+  <div class="timeline">
+    <div class="tl-item fade-in">
+      <span class="tl-year">JAN 2026 — PRESENT</span>
+      <h3>Course Assistant — ECE 385 (FPGA Design)</h3>
+      <div class="tl-org">University of Illinois Urbana-Champaign</div>
+      <p>Supporting students in SystemVerilog, the Vivado toolchain, and FPGA design labs. Debugging digital logic designs and holding office hours.</p>
+    </div>
+    <div class="tl-item fade-in">
+      <span class="tl-year">SUMMER 2025</span>
+      <h3>AI Software Development Intern</h3>
+      <div class="tl-org">HealthArk Insights · Mumbai</div>
+      <p>Built AI-driven features for a health analytics platform — Python, ML pipelines, and client-facing dashboards.</p>
+    </div>
+    <div class="tl-item fade-in">
+      <span class="tl-year">2023 — PRESENT</span>
+      <h3>Researcher &amp; Podcast Lead</h3>
+      <div class="tl-org">NeuroTechXUIUC</div>
+      <p>Neural network models for EEG signal classification, biomedical ML applications, and electrode impedance analysis. Also produces and hosts the club's research podcast.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SKILLS ============ -->
+<section id="skills">
+  <span class="section-label fade-in">// 03 — toolkit</span>
+  <h2 class="section-heading fade-in">Sk<span class="accent">ills</span></h2>
+
+  <div class="skill-groups">
+    <div class="skill-group fade-in">
+      <h3>Languages</h3>
+      <div class="pills">
+        <span class="pill">C</span><span class="pill">C++</span><span class="pill">Python</span><span class="pill">SystemVerilog</span><span class="pill">MATLAB</span><span class="pill">JavaScript</span>
+      </div>
+    </div>
+    <div class="skill-group fade-in">
+      <h3>Frameworks &amp; Tools</h3>
+      <div class="pills">
+        <span class="pill">ROS</span><span class="pill">OpenCV</span><span class="pill">TensorFlow</span><span class="pill">KiCad</span><span class="pill">SolidWorks</span><span class="pill">Vivado</span><span class="pill">Whisper</span><span class="pill">Claude API</span>
+      </div>
+    </div>
+    <div class="skill-group fade-in">
+      <h3>Domains</h3>
+      <div class="pills">
+        <span class="pill">Robotics &amp; Controls</span><span class="pill">FPGA Design</span><span class="pill">Embedded Systems</span><span class="pill">Signal Processing</span><span class="pill">PCB Design</span><span class="pill">Computer Vision</span><span class="pill">Machine Learning</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WRITING ============ -->
+<section id="writing">
+  <span class="section-label fade-in">// 04 — off the clock</span>
+  <h2 class="section-heading fade-in">Wri<span class="accent">ting</span></h2>
+  <p class="bio fade-in">Hridik writes poetry and literary fiction alongside his engineering work. His poems incorporate Mumbai-specific references, Hinglish code-switching, and emotionally precise language — posted regularly on Instagram.</p>
+
+  <blockquote class="pull-quote fade-in">"Engineering and writing are both just ways of making something out of nothing."</blockquote>
+
+  <div class="writing-ctas fade-in">
+    <a href="https://instagram.com/dilkikhaamoshiyan" class="btn btn-primary" target="_blank" rel="noopener">Read on Instagram</a>
+    <a href="https://instagram.com/hridik775" class="btn btn-outline" target="_blank" rel="noopener">Read Fiction</a>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section id="contact">
+  <span class="section-label fade-in">// 05 — say hi</span>
+  <h2 class="section-heading fade-in">Let's build <span class="accent">something.</span></h2>
+
+  <div class="email-card fade-in">
+    <code>hridikh2@illinois.edu</code>
+    <button id="copy-btn" aria-label="Copy email to clipboard">copy</button>
+  </div>
+
+  <div class="socials fade-in">
+    <a href="https://github.com/HridikH/portfolio" target="_blank" rel="noopener" aria-label="GitHub">
+      <svg viewBox="0 0 24 24"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.31.76-1.61-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.63-5.48 5.92.43.37.81 1.1.81 2.22l-.01 3.29c0 .31.21.69.83.57A12 12 0 0 0 12 .3z"/></svg>
+    </a>
+    <a href="https://www.linkedin.com/in/hridikh/" target="_blank" rel="noopener" aria-label="LinkedIn">
+      <svg viewBox="0 0 24 24"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.55C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.72C24 .77 23.2 0 22.22 0z"/></svg>
+    </a>
+    <a href="mailto:hridikh2@illinois.edu" aria-label="Email">
+      <svg viewBox="0 0 24 24"><path d="M12 12.713 1.015 5.562A2 2 0 0 1 2 4h20a2 2 0 0 1 .985 1.562L12 12.713zM12 15.087 0 7.275V20a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V7.275l-12 7.812z"/></svg>
+    </a>
+  </div>
+
+  <p class="location-note fade-in">Champaign, IL · <span class="open-tag">Open to Fall 2026 Co-op / Internship (Robotics &amp; Controls)</span></p>
+</section>
+
+</main>
+
+<footer>© 2026 Hridik Hingorani</footer>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ============ NAV ============ */
+  var hamburger=document.getElementById('hamburger');
+  var navLinks=document.getElementById('nav-links');
+  hamburger.addEventListener('click',function(){
+    hamburger.classList.toggle('open');
+    navLinks.classList.toggle('open');
+  });
+  navLinks.addEventListener('click',function(e){
+    if(e.target.tagName==='A'){
+      hamburger.classList.remove('open');
+      navLinks.classList.remove('open');
+    }
+  });
+
+  /* ============ COPY EMAIL ============ */
+  var copyBtn=document.getElementById('copy-btn');
+  copyBtn.addEventListener('click',function(){
+    var email='hridikh2@illinois.edu';
+    function done(){copyBtn.textContent='copied!';setTimeout(function(){copyBtn.textContent='copy';},1800);}
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(email).then(done);
+    }else{
+      var ta=document.createElement('textarea');
+      ta.value=email;document.body.appendChild(ta);
+      ta.select();document.execCommand('copy');
+      document.body.removeChild(ta);done();
+    }
+  });
+
+  /* ============ FADE-IN ON SCROLL ============ */
+  var observer=new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  },{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.fade-in').forEach(function(el){observer.observe(el);});
+
+  /* ============ SCROLL THREAD ============ */
+  var svg=document.getElementById('thread-svg');
+  var path=document.getElementById('thread-path');
+  var dot=document.getElementById('thread-dot');
+  var group=document.getElementById('thread-group');
+  var grad=document.getElementById('threadGrad');
+  var totalLen=0,docH=0,ticking=false;
+
+  // Build an organic wandering path through every section heading.
+  function buildPath(){
+    var w=window.innerWidth;
+    docH=Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight
+    );
+    var amp=w<768?w*0.28:w*0.32; // wander amplitude
+    var cx=w/2;
+    var pts=[{x:cx,y:0}];
+
+    // anchor points near each section heading, alternating sides
+    var headings=document.querySelectorAll('.section-heading');
+    var side=1;
+    headings.forEach(function(h){
+      var r=h.getBoundingClientRect();
+      var y=r.top+window.scrollY;
+      // midpoint wander between previous point and this heading
+      var prev=pts[pts.length-1];
+      pts.push({x:cx-side*amp*0.7,y:(prev.y+y)/2});
+      pts.push({x:cx+side*amp*(w<768?0.5:0.85),y:y+r.height/2});
+      side*=-1;
+    });
+    pts.push({x:cx-side*amp*0.5,y:docH-Math.min(300,docH*0.05)});
+    pts.push({x:cx,y:docH});
+
+    // Catmull-Rom -> cubic bezier for smooth organic curve
+    var d='M '+pts[0].x.toFixed(1)+' '+pts[0].y.toFixed(1);
+    for(var i=0;i<pts.length-1;i++){
+      var p0=pts[Math.max(i-1,0)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(i+2,pts.length-1)];
+      var c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6;
+      var c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6;
+      d+=' C '+c1x.toFixed(1)+' '+c1y.toFixed(1)+', '+c2x.toFixed(1)+' '+c2y.toFixed(1)+', '+p2.x.toFixed(1)+' '+p2.y.toFixed(1);
+    }
+    path.setAttribute('d',d);
+    grad.setAttribute('y2',docH);
+
+    totalLen=path.getTotalLength();
+    path.style.strokeDasharray=totalLen;
+    update();
+  }
+
+  function update(){
+    var scrollY=window.scrollY||window.pageYOffset;
+    var vh=window.innerHeight;
+    var maxScroll=docH-vh;
+    var progress=maxScroll>0?Math.min(1,Math.max(0,(scrollY+vh*0.75)/docH)):1;
+    var drawn=totalLen*progress;
+    path.style.strokeDashoffset=totalLen-drawn;
+    // shift document-space path into the fixed viewport
+    group.setAttribute('transform','translate(0,'+(-scrollY)+')');
+    // glowing dot at the leading tip
+    if(drawn>0){
+      var pt=path.getPointAtLength(drawn);
+      dot.setAttribute('cx',pt.x);
+      dot.setAttribute('cy',pt.y);
+    }
+  }
+
+  function onScroll(){
+    if(!ticking){
+      ticking=true;
+      requestAnimationFrame(function(){update();ticking=false;});
+    }
+  }
+
+  var resizeTimer;
+  function onResize(){
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(buildPath,150);
+  }
+
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onResize);
+  window.addEventListener('load',function(){
+    buildPath();
+    // rebuild once fonts/images settle
+    setTimeout(buildPath,600);
+  });
+  // build immediately too, in case load already fired
+  if(document.readyState==='complete'){buildPath();}
+  else{buildPath();}
+})();
+</script>
+</body>
+</html>
