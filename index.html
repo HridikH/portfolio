@@ -142,20 +142,43 @@ section{
   font-weight:900;
   line-height:1.02;
   letter-spacing:-.03em;
-  margin-bottom:.5rem;
+  margin-bottom:1rem;
   text-transform:uppercase;
   transform-style:preserve-3d;
   will-change:transform;
+  color:#f7f6ff;
 }
-/* extruded 3D shadow stack behind headings */
+/* full extruded 3D type — gradient purple→teal block receding to bottom-right */
 .section-heading{
   text-shadow:
-    1px 1px 0 rgba(124,58,237,.18),
-    2px 2px 0 rgba(124,58,237,.14),
-    3px 3px 0 rgba(124,58,237,.10),
-    4px 4px 0 rgba(20,184,166,.08),
-    6px 6px 0 rgba(20,184,166,.05);
+    1px 1px 0 #7c3aed,
+    2px 2px 0 #7444e4,
+    3px 3px 0 #6c4fda,
+    4px 4px 0 #635ad1,
+    5px 5px 0 #5a65c7,
+    6px 6px 0 #5170be,
+    7px 7px 0 #487bb4,
+    8px 8px 0 #3f86ab,
+    9px 9px 0 #3691a1,
+    10px 10px 0 #2d9c98,
+    11px 11px 0 #20a78f,
+    12px 12px 0 #16b187,
+    13px 13px 0 #12a87f,
+    14px 14px 0 #0f936e,
+    15px 15px 0 #0c7d5d,
+    16px 16px 0 #09674c,
+    18px 18px 22px rgba(0,0,0,.55),
+    0 0 40px rgba(124,58,237,.25);
 }
+/* bouncing 3D headings — starts after the entrance, desyncs naturally per section */
+@keyframes bobHead{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-20px)}
+}
+.section-heading.fade-in.visible{animation:bobHead 2.7s ease-in-out infinite;animation-delay:.9s}
+@media(prefers-reduced-motion:reduce){.section-heading.fade-in.visible{animation:none}}
+/* keep the gradient on accent as the glyph face, sitting in front of the extrusion */
+.section-heading .accent{position:relative}
 .section-heading .accent{
   background:linear-gradient(90deg,var(--purple),var(--teal));
   -webkit-background-clip:text;
@@ -895,19 +918,6 @@ footer{
     });
   }
 
-  /* ============ SCROLL-DRIVEN 3D HEADINGS ============ */
-  var heads=[].slice.call(document.querySelectorAll('.section-heading'));
-  function tiltHeads(){
-    var vh=window.innerHeight;
-    heads.forEach(function(h){
-      var r=h.getBoundingClientRect();
-      var mid=r.top+r.height/2;
-      // -1 (below viewport) .. 0 (centered) .. 1 (above)
-      var t=Math.max(-1,Math.min(1,(vh/2-mid)/(vh/2)));
-      var rx=(-t*16).toFixed(2);            // tip toward/away as it passes center
-      h.style.transform='translateZ(0) rotateX('+rx+'deg)';
-    });
-  }
 
   /* ============ SCROLL THREAD ============ */
   var svg=document.getElementById('thread-svg');
@@ -979,7 +989,7 @@ footer{
   function onScroll(){
     if(!ticking){
       ticking=true;
-      requestAnimationFrame(function(){update();tiltHeads();ticking=false;});
+      requestAnimationFrame(function(){update();ticking=false;});
     }
   }
 
@@ -993,7 +1003,6 @@ footer{
   window.addEventListener('resize',onResize);
   window.addEventListener('load',function(){
     buildPath();
-    tiltHeads();
     // rebuild once fonts/images settle
     setTimeout(buildPath,600);
   });
