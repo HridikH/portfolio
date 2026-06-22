@@ -430,7 +430,7 @@ section{
 /* ============ PROJECTS ============ */
 .project-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(310px,1fr));
+  grid-template-columns:repeat(auto-fill,minmax(min(400px,100%),1fr));
   gap:1.6rem;
   perspective:800px;
 }
@@ -476,7 +476,7 @@ section{
 .card:hover::after{opacity:1}
 .card>*{transform:translateZ(0.01px)}
 .card-media{
-  height:160px;
+  height:220px;
   background:
     linear-gradient(135deg,rgba(124,58,237,.12),rgba(20,184,166,.12)),
     repeating-linear-gradient(45deg,transparent 0 14px,rgba(255,255,255,.025) 14px 28px);
@@ -486,9 +486,9 @@ section{
   text-align:center;padding:0 1rem;
 }
 .card-media img,.card-media video{width:100%;height:100%;object-fit:cover}
-.card-body{padding:1.4rem;display:flex;flex-direction:column;gap:.8rem;flex:1}
-.card h3{font-size:1.15rem;font-weight:700;letter-spacing:-.01em}
-.card p{color:var(--muted);font-size:.88rem;flex:1}
+.card-body{padding:1.8rem;display:flex;flex-direction:column;gap:1rem;flex:1}
+.card h3{font-size:1.35rem;font-weight:700;letter-spacing:-.01em}
+.card p{color:var(--muted);font-size:.95rem;flex:1}
 .tags{display:flex;flex-wrap:wrap;gap:.45rem}
 .tag{
   font-family:var(--mono);
