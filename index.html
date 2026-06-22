@@ -19,7 +19,7 @@
   --text:#f5f5f5;
   --muted:#9a9a9a;
   --purple:#7c3aed;
-  --teal:#14b8a6;
+  --teal:#ffd60a;
   --card:#151515;
   --border:#262626;
   --mono:'Courier New',Courier,monospace;
@@ -148,25 +148,25 @@ section{
   will-change:transform;
   color:#f7f6ff;
 }
-/* full extruded 3D type — gradient purple→teal block receding to bottom-right */
+/* full extruded 3D type — gradient purple→yellow block receding to bottom-right */
 .section-heading{
   text-shadow:
     1px 1px 0 #7c3aed,
-    2px 2px 0 #7444e4,
-    3px 3px 0 #6c4fda,
-    4px 4px 0 #635ad1,
-    5px 5px 0 #5a65c7,
-    6px 6px 0 #5170be,
-    7px 7px 0 #487bb4,
-    8px 8px 0 #3f86ab,
-    9px 9px 0 #3691a1,
-    10px 10px 0 #2d9c98,
-    11px 11px 0 #20a78f,
-    12px 12px 0 #16b187,
-    13px 13px 0 #12a87f,
-    14px 14px 0 #0f936e,
-    15px 15px 0 #0c7d5d,
-    16px 16px 0 #09674c,
+    2px 2px 0 #8544de,
+    3px 3px 0 #8e4fcf,
+    4px 4px 0 #9659c0,
+    5px 5px 0 #9f64b1,
+    6px 6px 0 #a86ea1,
+    7px 7px 0 #b07892,
+    8px 8px 0 #b98383,
+    9px 9px 0 #c28d74,
+    10px 10px 0 #cb9865,
+    11px 11px 0 #d3a256,
+    12px 12px 0 #dcac47,
+    13px 13px 0 #e5b737,
+    14px 14px 0 #eec128,
+    15px 15px 0 #f6cc19,
+    16px 16px 0 #ffd60a,
     18px 18px 22px rgba(0,0,0,.55),
     0 0 40px rgba(124,58,237,.25);
 }
@@ -229,11 +229,11 @@ section{
   font-family:var(--mono);
   font-size:.75rem;
   color:var(--teal);
-  border:1px solid rgba(20,184,166,.45);
+  border:1px solid rgba(255,214,10,.45);
   border-radius:999px;
   padding:.3rem .9rem;
   margin-bottom:1.6rem;
-  background:rgba(20,184,166,.07);
+  background:rgba(255,214,10,.07);
 }
 .badge::before{
   content:'';
@@ -258,9 +258,9 @@ section{
   transform-style:preserve-3d;
   transition:transform .18s ease-out;
   text-shadow:
-    1px 1px 0 #7c3aed,2px 2px 0 #744ae4,3px 3px 0 #6b53da,4px 4px 0 #625dd0,
-    5px 5px 0 #5867c6,6px 6px 0 #4f71bc,7px 7px 0 #467bb2,8px 8px 0 #3d85a8,
-    9px 9px 0 #348f9e,10px 10px 0 #2b9994,11px 11px 0 #1fa78c,12px 12px 0 #14b8a6,
+    1px 1px 0 #7c3aed,2px 2px 0 #8848d8,3px 3px 0 #9456c4,4px 4px 0 #a065af,
+    5px 5px 0 #ac739b,6px 6px 0 #c48f71,7px 7px 0 #cf9d5d,8px 8px 0 #dbab48,
+    9px 9px 0 #e7ba33,10px 10px 0 #f3c81f,11px 11px 0 #f9cf12,12px 12px 0 #ffd60a,
     14px 14px 18px rgba(0,0,0,.5),0 0 36px rgba(124,58,237,.22);
 }
 .hero-name .line{display:block;overflow:hidden}
@@ -323,7 +323,7 @@ section{
 }
 .btn-outline:hover{
   border-color:var(--teal);color:var(--teal);
-  box-shadow:0 0 18px rgba(20,184,166,.25);
+  box-shadow:0 0 18px rgba(255,214,10,.25);
   transform:translateY(-2px);
 }
 .socials{
@@ -372,7 +372,7 @@ section{
 .headshot-note{font-family:var(--mono);font-size:.65rem;color:var(--muted)}
 
 /* ===== home socket (where the character lives) ===== */
-.socket{box-shadow:none;background:linear-gradient(135deg,rgba(124,58,237,.35),rgba(20,184,166,.35))}
+.socket{box-shadow:none;background:linear-gradient(135deg,rgba(124,58,237,.35),rgba(255,214,10,.35))}
 .socket-inner{
   background:#0f0f0f;
   border:2px dashed rgba(255,255,255,.10);
@@ -404,7 +404,7 @@ section{
   will-change:transform;
 }
 #character.grabbing .char-disc,#character:hover .char-disc{
-  box-shadow:0 26px 60px rgba(0,0,0,.55),0 0 70px rgba(20,184,166,.5);
+  box-shadow:0 26px 60px rgba(0,0,0,.55),0 0 70px rgba(255,214,10,.5);
 }
 .char-disc img{
   width:100%;height:100%;object-fit:cover;border-radius:50%;
@@ -450,7 +450,7 @@ section{
 .card.tilting{transition:transform .05s linear,border-color .3s ease,box-shadow .3s ease}
 .card:hover{
   border-color:rgba(124,58,237,.7);
-  box-shadow:0 28px 64px rgba(124,58,237,.30),0 0 0 1px rgba(20,184,166,.18);
+  box-shadow:0 28px 64px rgba(124,58,237,.30),0 0 0 1px rgba(255,214,10,.18);
 }
 /* idle bob — only after the entrance has played, paused while hovering (inline tilt wins) */
 @keyframes bob{
@@ -478,7 +478,7 @@ section{
 .card-media{
   height:220px;
   background:
-    linear-gradient(135deg,rgba(124,58,237,.12),rgba(20,184,166,.12)),
+    linear-gradient(135deg,rgba(124,58,237,.12),rgba(255,214,10,.12)),
     repeating-linear-gradient(45deg,transparent 0 14px,rgba(255,255,255,.025) 14px 28px);
   display:flex;align-items:center;justify-content:center;
   font-family:var(--mono);font-size:.7rem;color:var(--muted);
@@ -494,8 +494,8 @@ section{
   font-family:var(--mono);
   font-size:.68rem;
   color:var(--teal);
-  background:rgba(20,184,166,.08);
-  border:1px solid rgba(20,184,166,.3);
+  background:rgba(255,214,10,.08);
+  border:1px solid rgba(255,214,10,.3);
   border-radius:4px;
   padding:.18rem .5rem;
 }
@@ -530,7 +530,7 @@ section{
   border:3px solid var(--purple);
   box-shadow:0 0 12px rgba(124,58,237,.6);
 }
-.tl-item:nth-child(even)::before{border-color:var(--teal);box-shadow:0 0 12px rgba(20,184,166,.6)}
+.tl-item:nth-child(even)::before{border-color:var(--teal);box-shadow:0 0 12px rgba(255,214,10,.6)}
 .tl-year{
   font-family:var(--mono);
   font-size:.75rem;
@@ -605,7 +605,7 @@ section{
   margin-bottom:2rem;
   transition:border-color .3s,box-shadow .3s;
 }
-.email-card:hover{border-color:var(--teal);box-shadow:0 0 24px rgba(20,184,166,.2)}
+.email-card:hover{border-color:var(--teal);box-shadow:0 0 24px rgba(255,214,10,.2)}
 .email-card code{font-family:var(--mono);font-size:clamp(.85rem,2.5vw,1.05rem);color:var(--text)}
 #copy-btn{
   background:var(--purple);
@@ -652,7 +652,7 @@ footer{
   <defs>
     <linearGradient id="threadGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="4000">
       <stop offset="0%" stop-color="#7c3aed"/>
-      <stop offset="100%" stop-color="#14b8a6"/>
+      <stop offset="100%" stop-color="#ffd60a"/>
     </linearGradient>
   </defs>
   <g id="thread-group">
