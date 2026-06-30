@@ -1,1 +1,8 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+npm-debug.log*
+.vite
 sp26_ece391_We_Are_Kernel/
