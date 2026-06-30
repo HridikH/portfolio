@@ -58,8 +58,9 @@ export default function Humanoid() {
         color: STEEL.clone(),
         emissive: AMBER.clone(),
         emissiveIntensity: 0,
-        metalness: 0.25,
-        roughness: 0.62,
+        metalness: 0.82,
+        roughness: 0.34,
+        envMapIntensity: 1.25,
       });
       if (!m.geometry.attributes.normal) m.geometry.computeVertexNormals();
       m.geometry.computeBoundingSphere();

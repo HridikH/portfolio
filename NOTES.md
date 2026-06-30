@@ -23,9 +23,18 @@ EEG implicitly at the brain — kept. It mapped the CRS arm to ARMS and the pend
 and needed a home. If you'd rather fold Grogu into the head with the EEG, or drop a
 station, say so and I'll re-map in `src/data/stations.ts` (it's the single source of truth).
 
-## Humanoid asset (Option A — your GLB, now integrated)
+## Humanoid asset
 
-Status: **`humanoid-nav.glb` wired in** at `public/models/robot.glb`.
+Status: **procedural sleek android** at `public/models/robot.glb` (generated in-repo by
+`scripts/build_robot.py` — copy of the generator is in the outputs folder). Smooth capsule
+limbs, rounded joints, ellipsoid head, same 26 named parts. Rendering upgraded to glossy
+PBR metal with a procedural environment map (reflections, no HDR download), a contact
+shadow, and selective amber bloom (desktop, non-reduced-motion).
+
+Your original `humanoid-nav.glb` is kept at `public/models/humanoid-nav-backup.glb`. To go
+back to it, copy it over `robot.glb`. The region tagging below is unchanged either way.
+
+(Previously: `humanoid-nav.glb` wired in at `public/models/robot.glb`.)
 
 The model has 26 cleanly named nodes, so regions are tagged by node name in
 `src/r3f/Humanoid.tsx` (`regionOf()`):
