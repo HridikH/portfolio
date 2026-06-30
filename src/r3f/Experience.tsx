@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { Suspense, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import Humanoid from './Humanoid';
@@ -70,7 +70,9 @@ export default function Experience({ mobile }: { mobile: boolean }) {
       <directionalLight position={[-4, 2, -3]} intensity={0.25} color="#3b4150" />
       <pointLight ref={amber} color="#e8a33d" intensity={0} distance={9} decay={1.4} />
       {!mobile && <Starfield count={reduce ? 60 : 220} />}
-      <Humanoid />
+      <Suspense fallback={null}>
+        <Humanoid />
+      </Suspense>
     </>
   );
 }
