@@ -32,8 +32,10 @@ const BOB_AMP = 0.12;
 const BOB_SPEED = 1.1;
 
 // scratch objects (avoid per-frame allocation)
-const _wp = new THREE.Vector3();
 const _c = new THREE.Vector3();
+const _box = new THREE.Box3();
+const _tmpBox = new THREE.Box3();
+const _sphere = new THREE.Sphere();
 
 export default function Humanoid() {
   const group = useRef<THREE.Group>(null!);
@@ -119,19 +121,21 @@ export default function Humanoid() {
       mesh.scale.setScalar(next);
     }
 
-    // LIVE focus: world bounding sphere of the active part as it orbits
+    // LIVE focus: union the active part's GEOMETRY bounding boxes in world space.
+    // (Reading node origins is wrong here — this GLB's part nodes share the root origin
+    // and the geometry carries the offset, so node positions all collapse to one point.)
     const arr = byRegion.current[activeRegion as string];
     if (arr && arr.length) {
-      _c.set(0, 0, 0);
-      for (const m of arr) _c.add(m.getWorldPosition(_wp));
-      _c.divideScalar(arr.length);
-      let rad = 0;
+      _box.makeEmpty();
       for (const m of arr) {
-        const ri = (m.userData.r as number) * worldScale.current;
-        rad = Math.max(rad, m.getWorldPosition(_wp).distanceTo(_c) + ri);
+        if (!m.geometry.boundingBox) m.geometry.computeBoundingBox();
+        _tmpBox.copy(m.geometry.boundingBox as THREE.Box3).applyMatrix4(m.matrixWorld);
+        _box.union(_tmpBox);
       }
+      _box.getCenter(_c);
+      _box.getBoundingSphere(_sphere);
       state.focus.lerp(_c, 0.5); // light smoothing to avoid micro-jitter
-      state.radius = rad;
+      state.radius = _sphere.radius;
     }
   });
 
