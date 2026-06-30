@@ -25,43 +25,36 @@ station, say so and I'll re-map in `src/data/stations.ts` (it's the single sourc
 
 ## Humanoid asset
 
-Status: **procedural sleek android** at `public/models/robot.glb` (generated in-repo by
-`scripts/build_robot.py` — copy of the generator is in the outputs folder). Smooth capsule
-limbs, rounded joints, ellipsoid head, same 26 named parts. Rendering upgraded to glossy
-PBR metal with a procedural environment map (reflections, no HDR download), a contact
-shadow, and selective amber bloom (desktop, non-reduced-motion).
+Status: **`humanoid-realistic.glb` (you provided)** at `public/models/robot.glb` — a
+detailed 34-part android with its own realistic `silver` / `dark` / `cyan` / `shoe`
+materials and a visor. We **keep those materials** (cloned per-mesh) and only drive a
+tech-blue emissive glow on the active region; the visor carries an always-on cyan glow.
+Environment map (procedural lightformers, no HDR download) gives the silver reflections,
+plus a contact shadow and selective bloom (desktop, non-reduced-motion).
 
-Your original `humanoid-nav.glb` is kept at `public/models/humanoid-nav-backup.glb`. To go
-back to it, copy it over `robot.glb`. The region tagging below is unchanged either way.
+Earlier models are kept as backups: `public/models/humanoid-nav-backup.glb` (original nav
+rig) and the procedural generator `scripts/build_robot.py`.
 
-(Previously: `humanoid-nav.glb` wired in at `public/models/robot.glb`.)
+This model has no `eye`/`mouth` meshes (it uses a `visor`), so the region mapping in
+`src/r3f/Humanoid.tsx` (`regionOf()`) was updated:
 
-The model has 26 cleanly named nodes, so regions are tagged by node name in
-`src/r3f/Humanoid.tsx` (`regionOf()`):
+| Region (station)        | GLB nodes |
+|-------------------------|-----------|
+| brain (EEG)             | `head` |
+| eyes / vision (UR3)     | `visor` |
+| face (Grogu)            | `head`, `visor` |
+| jaw / language (Jarvis) | `neck` |
+| spine / nervous (kernel)| `abdomen`, `waist` |
+| arms (CRS)              | `shoulder_*`, `arm_*`, `elbow_*`, `wrist_*`, `hand_*` |
+| core / balance (BB-8)   | `chest`, `chest_panel`, `pelvis` |
+| legs / vestibular (LQR) | `leg_*`, `knee_*`, `ankle_*`, `foot_*`, `toe_*` |
 
-| Region | GLB nodes |
-|--------|-----------|
-| brain  | `head` |
-| eyes   | `eye_L`, `eye_R` |
-| face   | `head`, `eye_L`, `eye_R` (no dedicated face mesh, so it borrows them) |
-| jaw    | `mouth` |
-| spine  | `neck`, `spine` |
-| arms   | `shoulder_*`, `arm_upper_*`, `elbow_*`, `arm_lower_*`, `hand_*` |
-| core   | `chest`, `pelvis` |
-| legs   | `leg_upper_*`, `knee_*`, `leg_lower_*`, `foot_*` |
-
-The model is auto-fit at runtime (bounding-box scale + recenter) into the camera's
-traverse range, so it lines up with the head-to-toe scroll without manual numbers. It has
-no embedded materials, so each mesh gets a fresh steel material that lerps to amber when
-its region is active. The figure is 40 KB, so Draco/KTX2 aren't needed; if you later swap a
-heavier model I can add those.
-
-**Front-facing check:** I assumed the model faces +Z (toward the camera). If the eyes/mouth
-end up facing away, tell me and I'll add a 180° Y rotation.
+The model is auto-fit at runtime (bounding-box scale + recenter) into the camera traverse
+range. It faces +Z toward the camera (verified). 77 KB, so Draco/KTX2 aren't needed.
 
 Record the source + license for the deliverable:
 
-- Asset: humanoid-nav.glb (you provided)
+- Asset: humanoid-realistic.glb (you provided)
 - Source: _TBD — fill in where you got it_
 - License: _TBD — confirm CC0 / permissive_
 

@@ -8,31 +8,30 @@ import { prefersReducedMotion } from '../lib/webgl';
 
 const MODEL_URL = `${import.meta.env.BASE_URL}models/robot.glb`;
 
+// Map the realistic model's part names to our 8 diagnostic regions.
 function regionOf(name: string): Region | null {
   const n = name.toLowerCase();
   if (n === 'head') return 'brain';
-  if (n.startsWith('eye')) return 'eyes';
-  if (n === 'mouth') return 'jaw';
-  if (n === 'neck' || n === 'spine') return 'spine';
-  if (n === 'chest' || n === 'pelvis') return 'core';
-  if (n.startsWith('shoulder') || n.startsWith('arm') || n.startsWith('elbow') || n.startsWith('hand'))
+  if (n === 'visor') return 'eyes'; // optical sensor
+  if (n === 'neck') return 'jaw'; // voice / language
+  if (n === 'abdomen' || n === 'waist') return 'spine'; // nervous-system column
+  if (n === 'chest' || n === 'chest_panel' || n === 'pelvis') return 'core';
+  if (
+    n.startsWith('shoulder') || n.startsWith('arm') || n.startsWith('elbow') ||
+    n.startsWith('wrist') || n.startsWith('hand')
+  )
     return 'arms';
-  if (n.startsWith('leg') || n.startsWith('knee') || n.startsWith('foot')) return 'legs';
+  if (
+    n.startsWith('leg') || n.startsWith('knee') || n.startsWith('ankle') ||
+    n.startsWith('foot') || n.startsWith('toe')
+  )
+    return 'legs';
   return null;
 }
 
-const FACE_MESHES = new Set(['head', 'eye_l', 'eye_r', 'visor']);
-// two-tone android: brushed silver panels + dark joints/extremities, glowing visor
-const SILVER = new THREE.Color('#c6cad0');
-const DARK = new THREE.Color('#16181c');
+const FACE_MESHES = new Set(['head', 'visor']);
 const BLUE = new THREE.Color('#4f7bff'); // active-region tech-blue glow
-const CYAN = new THREE.Color('#28d6ef'); // always-on visor / sensors
-const SILVER_PARTS = new Set([
-  'chest', 'chest_plate', 'pelvis', 'shoulder_l', 'shoulder_r',
-  'arm_upper_l', 'arm_upper_r', 'arm_lower_l', 'arm_lower_r',
-  'leg_upper_l', 'leg_upper_r', 'leg_lower_l', 'leg_lower_r',
-]);
-const GLOW_PARTS = new Set(['visor', 'eye_l', 'eye_r']);
+const CYAN = new THREE.Color('#28d6ef'); // always-on visor
 
 const TOP_Y = 3.7;
 const TARGET_HEIGHT = 7.6;
@@ -63,17 +62,17 @@ export default function Humanoid() {
       const m = o as THREE.Mesh;
       if (!m.isMesh) return;
       const lname = m.name.toLowerCase();
-      const glow = GLOW_PARTS.has(lname);
-      const silver = SILVER_PARTS.has(lname);
-      m.material = new THREE.MeshStandardMaterial({
-        color: silver ? SILVER.clone() : DARK.clone(),
-        emissive: glow ? CYAN.clone() : BLUE.clone(),
-        emissiveIntensity: glow ? 0.95 : 0,
-        metalness: silver ? 0.92 : glow ? 0.2 : 0.55,
-        roughness: silver ? 0.26 : glow ? 0.35 : 0.46,
-        envMapIntensity: silver ? 1.5 : 1.0,
-      });
-      m.userData.baseEmissive = glow ? 0.95 : 0;
+      const isVisor = lname === 'visor';
+      // keep the model's realistic material (silver / dark / cyan / shoe) but clone it
+      // per-mesh so each part's emissive can be driven independently.
+      const src = (Array.isArray(m.material) ? m.material[0] : m.material) as THREE.MeshStandardMaterial;
+      const mat = src.clone();
+      mat.emissive = (isVisor ? CYAN : BLUE).clone();
+      mat.emissiveIntensity = isVisor ? 0.95 : 0;
+      mat.envMapIntensity = 1.2;
+      mat.needsUpdate = true;
+      m.material = mat;
+      m.userData.baseEmissive = isVisor ? 0.95 : 0;
       if (!m.geometry.attributes.normal) m.geometry.computeVertexNormals();
       m.geometry.computeBoundingSphere();
       m.userData.r = m.geometry.boundingSphere?.radius ?? 0.2;
@@ -82,8 +81,6 @@ export default function Humanoid() {
       const region = regionOf(lname);
       if (region) regions.add(region);
       if (FACE_MESHES.has(lname)) regions.add('face');
-      if (lname === 'visor') regions.add('eyes'); // visor flares on the vision station
-      if (lname === 'chest_plate') regions.add('core');
       m.userData.regions = [...regions];
       list.push(m);
       for (const r of regions) (map[r] ??= []).push(m);
