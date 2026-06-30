@@ -12,38 +12,49 @@ export default function Stations() {
 
   useLayoutEffect(() => {
     const reduce = prefersReducedMotion();
+    const N = stations.length;
+    const smoothstep = (e0: number, e1: number, x: number) => {
+      const t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0)));
+      return t * t * (3 - 2 * t);
+    };
     const ctx = gsap.context(() => {
-      const sections = gsap.utils.toArray<HTMLElement>('.station');
-      sections.forEach((sec, i) => {
+      // master timeline: one scrubbed trigger over the whole stations region drives which
+      // part is active and the rack-focus zoom. No vertical dolly — the camera rig reads
+      // the live part position and frames it.
+      ScrollTrigger.create({
+        trigger: root.current,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: true,
+        onUpdate: (self) => {
+          const p = self.progress;
+          state.progress = p;
+          const pos = p * (N - 1); // 0 .. N-1
+          const active = Math.round(pos);
+          setActive(Math.min(N - 1, Math.max(0, active)));
+          // framed (zoom 1) when centered on a station; breathes out toward ~0.55 between
+          const d = Math.abs(pos - active); // 0 .. 0.5
+          state.zoom = reduce ? 0 : 1 - smoothstep(0, 0.5, d) * 0.45;
+        },
+      });
+
+      // per-station content cards still fade in as they scroll through
+      gsap.utils.toArray<HTMLElement>('.station').forEach((sec) => {
         const card = sec.querySelector('.station-card');
-        // arrival: pin this station to its body region (camera target + highlight)
-        ScrollTrigger.create({
-          trigger: sec,
-          start: 'top center',
-          end: 'bottom center',
-          onToggle: (self) => {
-            if (self.isActive) {
-              setActive(i);
-              state.target = stations[i].bodyY;
-            }
-          },
-        });
-        // content fade, synced to scroll
-        if (card) {
-          if (reduce) {
-            gsap.set(card, { opacity: 1, y: 0 });
-          } else {
-            gsap.fromTo(
-              card,
-              { opacity: 0, y: 28 },
-              {
-                opacity: 1,
-                y: 0,
-                ease: 'power2.out',
-                scrollTrigger: { trigger: sec, start: 'top 78%', end: 'top 42%', scrub: true },
-              },
-            );
-          }
+        if (!card) return;
+        if (reduce) {
+          gsap.set(card, { opacity: 1, y: 0 });
+        } else {
+          gsap.fromTo(
+            card,
+            { opacity: 0, y: 28 },
+            {
+              opacity: 1,
+              y: 0,
+              ease: 'power2.out',
+              scrollTrigger: { trigger: sec, start: 'top 78%', end: 'top 42%', scrub: true },
+            },
+          );
         }
       });
     }, root);

@@ -2,14 +2,11 @@ import { useEffect, useRef } from 'react';
 import { state, useActiveStation } from '../store';
 import { stations } from '../data/stations';
 
-// Body height ~1.8 m -> express camera depth as mm down the body, for telemetry flavor.
-const BODY_MM = 1830;
-
 export default function Hud() {
   const active = useActiveStation();
   const s = stations[Math.max(0, Math.min(stations.length - 1, active))];
   const pct = useRef<HTMLSpanElement>(null);
-  const depth = useRef<HTMLSpanElement>(null);
+  const zoom = useRef<HTMLSpanElement>(null);
   const bar = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -17,7 +14,7 @@ export default function Hud() {
     const tick = () => {
       const p = state.progress;
       if (pct.current) pct.current.textContent = (p * 100).toFixed(0).padStart(2, '0') + '%';
-      if (depth.current) depth.current.textContent = (p * BODY_MM).toFixed(0).padStart(4, '0') + 'mm';
+      if (zoom.current) zoom.current.textContent = (state.zoomDisp * 100).toFixed(0).padStart(3, '0') + '%';
       if (bar.current) bar.current.style.width = (p * 100).toFixed(2) + '%';
       raf = requestAnimationFrame(tick);
     };
@@ -37,7 +34,7 @@ export default function Hud() {
           <div><span className="k">ID</span> <span className="v">{s.no}</span></div>
         </div>
         <div className="cell bl">
-          <div><span className="k">DEPTH</span> <span className="v" ref={depth}>0000mm</span></div>
+          <div><span className="k">FOCUS</span> <span className="v" ref={zoom}>000%</span></div>
           <div><span className="k">REGION</span> {s.anatomy}</div>
         </div>
         <div className="cell br">

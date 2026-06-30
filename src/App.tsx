@@ -43,18 +43,18 @@ export default function App() {
     gsap.ticker.add(raf);
     gsap.ticker.lagSmoothing(0);
 
-    // camera reaches the feet through the closing sections
+    // closing sections (off-clock + contact) pull back to a wide shot of the whole body
     const tail = ScrollTrigger.create({
       trigger: '#contact',
       start: 'top center',
       onToggle: (self) => {
         if (self.isActive) {
           setActive(stations.length - 1);
-          state.target = 1;
+          state.zoom = 0;
         }
       },
     });
-    // returning to the very top resets to the head
+    // the hero sits wide on the whole robot before the diagnostic begins
     const head = ScrollTrigger.create({
       trigger: '#top',
       start: 'top center',
@@ -62,7 +62,7 @@ export default function App() {
       onToggle: (self) => {
         if (self.isActive) {
           setActive(0);
-          state.target = stations[0].bodyY;
+          state.zoom = 0;
         }
       },
     });
