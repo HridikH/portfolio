@@ -23,33 +23,38 @@ EEG implicitly at the brain — kept. It mapped the CRS arm to ARMS and the pend
 and needed a home. If you'd rather fold Grogu into the head with the EEG, or drop a
 station, say so and I'll re-map in `src/data/stations.ts` (it's the single source of truth).
 
-## Humanoid asset (Option A — you provide the GLB)
+## Humanoid asset (Option A — your GLB, now integrated)
 
-Status: **placeholder in place, awaiting your GLB.**
+Status: **`humanoid-nav.glb` wired in** at `public/models/robot.glb`.
 
-The humanoid is currently a segmented low-poly figure built from primitives in
-`src/r3f/Humanoid.tsx`. Every body region is an addressable mesh tagged with
-`userData.region` (`brain | eyes | face | jaw | spine | arms | core | legs`), so the
-amber highlight, dim, scale-pulse, and camera focus all work today.
+The model has 26 cleanly named nodes, so regions are tagged by node name in
+`src/r3f/Humanoid.tsx` (`regionOf()`):
 
-To drop in your CC0 GLB:
+| Region | GLB nodes |
+|--------|-----------|
+| brain  | `head` |
+| eyes   | `eye_L`, `eye_R` |
+| face   | `head`, `eye_L`, `eye_R` (no dedicated face mesh, so it borrows them) |
+| jaw    | `mouth` |
+| spine  | `neck`, `spine` |
+| arms   | `shoulder_*`, `arm_upper_*`, `elbow_*`, `arm_lower_*`, `hand_*` |
+| core   | `chest`, `pelvis` |
+| legs   | `leg_upper_*`, `knee_*`, `leg_lower_*`, `foot_*` |
 
-1. Put the file at `public/models/robot.glb`.
-2. In `Humanoid.tsx`, replace the primitive JSX with a `useGLTF('models/robot.glb')`
-   component and tag each child mesh's `userData.region` with the same keys above
-   (by mesh name, or by bounding-box if the model is one merged mesh — tell me which and
-   I'll write the tagging).
-3. The per-frame highlight loop keys off `userData.region`, so nothing else changes.
+The model is auto-fit at runtime (bounding-box scale + recenter) into the camera's
+traverse range, so it lines up with the head-to-toe scroll without manual numbers. It has
+no embedded materials, so each mesh gets a fresh steel material that lerps to amber when
+its region is active. The figure is 40 KB, so Draco/KTX2 aren't needed; if you later swap a
+heavier model I can add those.
 
-Optimization path once the GLB is in: Draco-compress geometry, KTX2-compress any textures,
-and run `npx gltfjsx` to generate a typed component. I can do all three once the file lands.
+**Front-facing check:** I assumed the model faces +Z (toward the camera). If the eyes/mouth
+end up facing away, tell me and I'll add a 180° Y rotation.
 
-Recommended sources (CC0): Quaternius robot packs, Poly Pizza. Record the exact source +
-license here when you add it:
+Record the source + license for the deliverable:
 
-- Asset: _TBD_
-- Source: _TBD_
-- License: _TBD_
+- Asset: humanoid-nav.glb (you provided)
+- Source: _TBD — fill in where you got it_
+- License: _TBD — confirm CC0 / permissive_
 
 ## WebGPU
 
