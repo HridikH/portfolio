@@ -53,6 +53,7 @@ export default function Humanoid() {
         roughness: 0.62,
       });
       m.material = mat;
+      if (!m.geometry.attributes.normal) m.geometry.computeVertexNormals();
       m.castShadow = m.receiveShadow = true;
       const regions = new Set<Region>();
       if (region) regions.add(region);

@@ -8,7 +8,7 @@ import { prefersReducedMotion } from '../lib/webgl';
 
 const HEAD_Y = 3.7;
 const FEET_Y = -3.9;
-const CAM_Z = 6.2;
+const CAM_Z = 9.6;
 
 function focusY(progress: number) {
   return HEAD_Y - progress * (HEAD_Y - FEET_Y);
