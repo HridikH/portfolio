@@ -37,10 +37,10 @@ export default function Experience({ mobile }: { mobile: boolean }) {
 
       {/* procedural environment for real metal reflections — no HDR download */}
       <Environment resolution={256}>
-        <Lightformer intensity={2.2} position={[0, 4, 4]} scale={[8, 5, 1]} color="#cfd6e2" />
-        <Lightformer intensity={1.4} position={[5, 1, 2]} scale={[3, 6, 1]} color="#e8a33d" />
-        <Lightformer intensity={1.0} position={[-5, 1, 2]} scale={[3, 6, 1]} color="#5b6472" />
-        <Lightformer intensity={1.6} position={[0, 2, -6]} scale={[10, 6, 1]} color="#3a4150" />
+        <Lightformer intensity={2.2} position={[0, 4, 4]} scale={[8, 5, 1]} color="#dfe6f2" />
+        <Lightformer intensity={1.5} position={[5, 1, 2]} scale={[3, 6, 1]} color="#4f7bff" />
+        <Lightformer intensity={1.3} position={[-5, 1, 2]} scale={[3, 6, 1]} color="#a855f7" />
+        <Lightformer intensity={1.6} position={[0, 2, -6]} scale={[10, 6, 1]} color="#2a3350" />
       </Environment>
 
       {!mobile && <Starfield count={reduce ? 60 : 220} />}

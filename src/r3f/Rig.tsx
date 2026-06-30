@@ -58,5 +58,5 @@ export default function Rig() {
     }
   });
 
-  return <pointLight ref={amber} color="#e8a33d" intensity={0} distance={14} decay={1.2} />;
+  return <pointLight ref={amber} color="#5b8cff" intensity={0} distance={14} decay={1.2} />;
 }

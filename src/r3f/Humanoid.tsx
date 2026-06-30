@@ -21,9 +21,18 @@ function regionOf(name: string): Region | null {
   return null;
 }
 
-const FACE_MESHES = new Set(['head', 'eye_l', 'eye_r']);
-const STEEL = new THREE.Color('#6c7480');
-const AMBER = new THREE.Color('#e8a33d');
+const FACE_MESHES = new Set(['head', 'eye_l', 'eye_r', 'visor']);
+// two-tone android: brushed silver panels + dark joints/extremities, glowing visor
+const SILVER = new THREE.Color('#c6cad0');
+const DARK = new THREE.Color('#16181c');
+const BLUE = new THREE.Color('#4f7bff'); // active-region tech-blue glow
+const CYAN = new THREE.Color('#28d6ef'); // always-on visor / sensors
+const SILVER_PARTS = new Set([
+  'chest', 'chest_plate', 'pelvis', 'shoulder_l', 'shoulder_r',
+  'arm_upper_l', 'arm_upper_r', 'arm_lower_l', 'arm_lower_r',
+  'leg_upper_l', 'leg_upper_r', 'leg_lower_l', 'leg_lower_r',
+]);
+const GLOW_PARTS = new Set(['visor', 'eye_l', 'eye_r']);
 
 const TOP_Y = 3.7;
 const TARGET_HEIGHT = 7.6;
@@ -53,22 +62,28 @@ export default function Humanoid() {
     scene.traverse((o) => {
       const m = o as THREE.Mesh;
       if (!m.isMesh) return;
-      const region = regionOf(m.name);
+      const lname = m.name.toLowerCase();
+      const glow = GLOW_PARTS.has(lname);
+      const silver = SILVER_PARTS.has(lname);
       m.material = new THREE.MeshStandardMaterial({
-        color: STEEL.clone(),
-        emissive: AMBER.clone(),
-        emissiveIntensity: 0,
-        metalness: 0.82,
-        roughness: 0.34,
-        envMapIntensity: 1.25,
+        color: silver ? SILVER.clone() : DARK.clone(),
+        emissive: glow ? CYAN.clone() : BLUE.clone(),
+        emissiveIntensity: glow ? 0.95 : 0,
+        metalness: silver ? 0.92 : glow ? 0.2 : 0.55,
+        roughness: silver ? 0.26 : glow ? 0.35 : 0.46,
+        envMapIntensity: silver ? 1.5 : 1.0,
       });
+      m.userData.baseEmissive = glow ? 0.95 : 0;
       if (!m.geometry.attributes.normal) m.geometry.computeVertexNormals();
       m.geometry.computeBoundingSphere();
       m.userData.r = m.geometry.boundingSphere?.radius ?? 0.2;
       m.castShadow = m.receiveShadow = true;
       const regions = new Set<Region>();
+      const region = regionOf(lname);
       if (region) regions.add(region);
-      if (FACE_MESHES.has(m.name.toLowerCase())) regions.add('face');
+      if (FACE_MESHES.has(lname)) regions.add('face');
+      if (lname === 'visor') regions.add('eyes'); // visor flares on the vision station
+      if (lname === 'chest_plate') regions.add('core');
       m.userData.regions = [...regions];
       list.push(m);
       for (const r of regions) (map[r] ??= []).push(m);
@@ -111,14 +126,15 @@ export default function Humanoid() {
     // amber-on-steel highlight (unchanged behaviour)
     const active = stations[Math.max(0, Math.min(stations.length - 1, state.active))];
     const activeRegion = active?.region;
-    const pulse = reduce ? 0.95 : 0.8 + Math.sin(t.current * 4) * 0.2;
+    const activeI = reduce ? 1.4 : 1.25 + Math.sin(t.current * 4) * 0.45;
     const k = 1 - Math.pow(0.0012, dt);
     for (const mesh of meshes.current) {
       const on = (mesh.userData.regions as Region[]).includes(activeRegion as Region);
+      const base = (mesh.userData.baseEmissive as number) ?? 0;
       const mat = mesh.material as THREE.MeshStandardMaterial;
-      mat.emissiveIntensity += ((on ? pulse : 0) - mat.emissiveIntensity) * k;
-      mat.color.lerp(on ? AMBER : STEEL, k * 0.35);
-      const next = mesh.scale.x + ((on ? 1.04 : 1) - mesh.scale.x) * k;
+      // emissive only — base material colours (silver / dark) stay intact
+      mat.emissiveIntensity += ((on ? activeI : base) - mat.emissiveIntensity) * k;
+      const next = mesh.scale.x + ((on ? 1.03 : 1) - mesh.scale.x) * k;
       mesh.scale.setScalar(next);
     }
 

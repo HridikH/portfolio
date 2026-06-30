@@ -1,8 +1,10 @@
 :root {
   --void: #07080b;
   --paper: #ece7de;
-  --amber: #e8a33d;
-  --amber-dim: rgba(232, 163, 61, 0.4);
+  /* tech blue is the primary accent; violet is the secondary (var names kept) */
+  --amber: #5b8cff;
+  --amber-dim: rgba(91, 140, 255, 0.42);
+  --violet: #a855f7;
   --steel: #7d828c;
   --steel-dim: #3a3e46;
   --line: rgba(180, 190, 205, 0.12);
@@ -90,7 +92,7 @@ a { color: inherit; text-decoration: none; }
   font-size: clamp(56px, 12vw, 150px); line-height: 0.92; letter-spacing: -0.01em;
   color: var(--paper);
 }
-.hero h1 em { font-style: italic; color: var(--amber); }
+.hero h1 em { font-style: italic; color: var(--violet); }
 .hero .tagline {
   font-family: var(--serif); font-style: italic;
   font-size: clamp(1.3rem, 3vw, 2.1rem); color: var(--paper); margin-top: 1.4rem; max-width: 22ch;
@@ -169,7 +171,7 @@ a { color: inherit; text-decoration: none; }
 .pull {
   font-family: var(--serif); font-style: italic;
   font-size: clamp(1.4rem, 3.4vw, 2.3rem); line-height: 1.35; color: var(--paper);
-  margin: 2rem 0; padding-left: 1.4rem; border-left: 2px solid var(--amber); max-width: 24ch;
+  margin: 2rem 0; padding-left: 1.4rem; border-left: 2px solid var(--violet); max-width: 24ch;
 }
 .btn-row { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1.6rem; }
 .btn {
