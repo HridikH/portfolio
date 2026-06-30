@@ -25,7 +25,7 @@ function regionOf(name: string): Region | null {
 // 'face' (Grogu) has no dedicated mesh, so it borrows the head + eyes.
 const FACE_MESHES = new Set(['head', 'eye_l', 'eye_r']);
 
-const STEEL = new THREE.Color('#2b2f37');
+const STEEL = new THREE.Color('#6c7480');
 const AMBER = new THREE.Color('#e8a33d');
 
 // Fit the model into the camera's y-range (head ~+3.7, feet ~-3.9).
@@ -49,8 +49,8 @@ export default function Humanoid() {
         color: STEEL.clone(),
         emissive: AMBER.clone(),
         emissiveIntensity: 0,
-        metalness: 0.35,
-        roughness: 0.55,
+        metalness: 0.25,
+        roughness: 0.62,
       });
       m.material = mat;
       m.castShadow = m.receiveShadow = true;

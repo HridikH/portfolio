@@ -64,11 +64,13 @@ export default function Experience({ mobile }: { mobile: boolean }) {
   return (
     <>
       <color attach="background" args={['#07080b']} />
-      <fog attach="fog" args={['#07080b', 7, 16]} />
-      <ambientLight intensity={0.18} />
-      <directionalLight position={[3, 6, 5]} intensity={0.5} color="#cdd3dd" />
-      <directionalLight position={[-4, 2, -3]} intensity={0.25} color="#3b4150" />
-      <pointLight ref={amber} color="#e8a33d" intensity={0} distance={9} decay={1.4} />
+      <fog attach="fog" args={['#07080b', 11, 24]} />
+      <ambientLight intensity={0.55} />
+      <hemisphereLight args={['#4a5160', '#0c0e14', 0.8]} />
+      <directionalLight position={[4, 7, 6]} intensity={1.4} color="#efe6d2" />
+      <directionalLight position={[-5, 2, 2]} intensity={0.6} color="#7f879a" />
+      <directionalLight position={[0, 1, 9]} intensity={0.5} color="#cdd3dd" />
+      <pointLight ref={amber} color="#e8a33d" intensity={0} distance={11} decay={1.3} />
       {!mobile && <Starfield count={reduce ? 60 : 220} />}
       <Suspense fallback={null}>
         <Humanoid />
