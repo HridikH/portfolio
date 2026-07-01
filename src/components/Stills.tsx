@@ -61,7 +61,7 @@ export default function Stills() {
         if (el) el.style.opacity = k === key ? '1' : '0';
       }
       // focus-pull scale (subtle) + gentle breath
-      const target = reduce.current ? 1 : 1.02 + z * 0.08;
+      const target = reduce.current ? 1 : 1 + z * 0.06;
       scale += (target - scale) * 0.06;
       if (wrap.current) wrap.current.style.transform = `scale(${scale.toFixed(4)})`;
       // blue diagnostic glow tracks the zoom
@@ -87,7 +87,6 @@ export default function Stills() {
         {!reduce.current && <div className="stills-scan" />}
       </div>
       <div className="stills-glow" ref={glow} />
-      <div className="stills-vignette" />
     </div>
   );
 }
