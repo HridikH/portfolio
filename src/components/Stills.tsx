@@ -79,7 +79,7 @@ export default function Stills() {
         {(Object.keys(SRC) as Key[]).map((k) => (
           <div
             key={k}
-            className="stills-layer"
+            className={`stills-layer${k === 'hero' ? ' is-hero' : ''}`}
             ref={(el) => (layers.current[k] = el)}
             style={{ backgroundImage: `url(${SRC[k]})`, opacity: k === 'hero' ? 1 : 0 }}
           />
