@@ -7,7 +7,7 @@ import Stations from './components/Stations';
 import OffClock from './components/OffClock';
 import Contact from './components/Contact';
 import Hud from './components/Hud';
-import Stills from './components/Stills';
+import Cinema from './components/Cinema';
 import { prefersReducedMotion } from './lib/webgl';
 import { setActive, state } from './store';
 import { stations } from './data/stations';
@@ -63,7 +63,7 @@ export default function App() {
 
   return (
     <>
-      <Stills />
+      <Cinema />
       <Hud />
       <main className="overlay">
         <Hero />

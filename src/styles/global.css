@@ -1,10 +1,10 @@
 :root {
-  --void: #07080b;
+  --void: #070708;
   --paper: #ece7de;
-  /* tech blue is the primary accent; violet is the secondary (var names kept) */
-  --amber: #5b8cff;
-  --amber-dim: rgba(91, 140, 255, 0.42);
-  --violet: #a855f7;
+  /* unified on cyan (sampled from the robot's visor); cool blue is the secondary */
+  --amber: #33d1e8;
+  --amber-dim: rgba(51, 209, 232, 0.42);
+  --violet: #6aa8ff;
   --steel: #7d828c;
   --steel-dim: #3a3e46;
   --line: rgba(180, 190, 205, 0.12);
@@ -31,7 +31,11 @@ a { color: inherit; text-decoration: none; }
   border-radius: 2px;
 }
 
-/* ---------- hyperreal stills scene ---------- */
+/* ---------- scroll-cinema stage ---------- */
+.cinema-fixed { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: #070708; }
+.cinema-canvas { display: block; width: 100%; height: 100%; }
+
+/* ---------- hyperreal stills scene (legacy fallback styles) ---------- */
 .stills-fixed {
   position: fixed;
   inset: 0;
