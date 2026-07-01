@@ -64,3 +64,45 @@ src/
 
 See `NOTES.md` for the region→project mapping, the humanoid asset status, and the items
 left as placeholders to fill in.
+
+## Scroll-cinema engine (`scroll-cinema` branch)
+
+The 3D real-time layer is replaced by a **pre-rendered, scroll-scrubbed frame engine** so the
+humanoid can be photoreal without a live GPU cost. Self-contained in `src/cinema/`.
+
+**Framework choice:** kept **Vite + React + TS**, engine ported as a standalone module — not
+migrated to Next.js. A Next migration would change the deploy pipeline (GitHub Pages) and buys
+nothing for a static scroll page. Nothing here needs SSR.
+
+**Accent choice:** **unified on cyan** (sampled from the robot's visor), with a cool-blue
+secondary for the wordmark. Ground is `#070708`. (The alternative — amber UI + cyan only on the
+robot — was dropped for cohesion.)
+
+### How it works
+- **Capture once, scrub forever.** `capture.ts` plays each clip through a hidden `<video>` once,
+  and via `requestVideoFrameCallback` exports every decoded frame to a **WebP blob** → `Image`.
+  After that, scrolling never touches the video — the scrubber just picks a frame index and
+  `drawImage`s. Capture width is device-bound and never upscales
+  (`min(3840, max(mobile?900:1920, innerW*dpr))`).
+- **Cache:** each WebP sequence is stored in **IndexedDB** (`idb.ts`, store `hh-scroll`, key
+  `url|width`). First visit buffers; return visits restore instantly. Partial captures are never
+  persisted.
+- **Scrubber (`scrubber.ts`):** a hand-written rAF loop. Scroll progress (lerp `0.09`) maps to
+  act spans → frame index → `drawImage`. Live canvas grade every frame
+  (`brightness 1.13 / contrast 1.08 / saturate 1.22`, plus `0–4px` velocity blur), breathing
+  scale `1.05 + sin·0.03`, edge/vignette darkening, and a cyan floor-glow.
+- **Idle loop:** when scroll is idle the `idle` act's frames advance on their own so the robot
+  stays alive; scrubbing pauses it.
+- **Fallbacks:** no `requestVideoFrameCallback` **or** no clips yet → crossfade the active
+  station's still on the graded stage (this is what ships today, with empty URLs).
+  `prefers-reduced-motion` → one static still, no animation. **Empty clip URLs are valid** — the
+  engine skips them and falls back, so the site builds and runs at every stage.
+
+### Adding a clip
+1. Render the clip (see the prompt spec) and host it (CDN or `public/`).
+2. Put the URL in **`src/cinema/assets.ts`** → `CLIPS` (e.g. `descent: '…/descent.webm'`).
+   Segment spans live in the `ACTS` array in the same file.
+3. Reload. First load buffers it behind the hero, caches to IndexedDB, then scrubs it. The
+   `pullback` act reuses `macro`'s frames reversed automatically (`reverseOf`).
+
+The typed assets file is the only thing you edit as you produce footage.

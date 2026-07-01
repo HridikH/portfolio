@@ -85,3 +85,26 @@ WebGPU attempt that auto-falls back — flagged separately so it can't break the
 - `npm run preview` serves correctly under the `/portfolio/` base; assets resolve (200).
 - I could not render an interactive preview from the build environment (no browser), so
   please run `npm run dev` and eyeball the motion. Anything off, I'll tune.
+
+## Scroll-cinema (scroll-cinema branch) — act → project mapping
+
+The DESCENT clip is the spine; station content (`src/data/stations.ts`) overlays at its
+sub-spans as the camera travels head → toe. Mapping to the real projects:
+
+| Act (kind)          | Body region      | Projects overlaid |
+|---------------------|------------------|-------------------|
+| open (idle)         | full hero        | — (standby) |
+| descent (spine)     | head → feet      | head/visor: EEG board, UR3 vision, Jarvis voice, Grogu · chest/spine: RISC-V kernel · arms/hands: CRS arm · legs/feet: LQR pendulum |
+| orbit               | lateral profile  | "engineered from all sides" beat |
+| bridge              | orbit → hero     | (transition, no content) |
+| macro               | visor / hand joint | detail beat |
+| pullback (macroReverse) | back to hero | closing / contact |
+
+Stations keep their existing 8-project mapping; the acts frame them.
+
+### Placeholdered (fill in as you produce footage)
+- **All clip URLs are empty** in `src/cinema/assets.ts` → the site runs on the AI stills
+  (`public/renders/*.jpg`) via the crossfade fallback. Add URLs to `CLIPS` to activate the
+  frame scrubber. Render order + prompts are in the build spec.
+- Segment spans in `ACTS` are a first pass — tune once real clips exist.
+- The reference/robot image is `public/renders/reference.jpeg`; asset source/license still TBD.
