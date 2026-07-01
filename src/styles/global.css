@@ -31,6 +31,44 @@ a { color: inherit; text-decoration: none; }
   border-radius: 2px;
 }
 
+/* ---------- hyperreal stills scene ---------- */
+.stills-fixed {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: radial-gradient(ellipse 90% 70% at 60% 25%, #0c0e14 0%, var(--void) 70%);
+}
+.stills-wrap { position: absolute; inset: 0; will-change: transform; transform-origin: 60% 45%; }
+.stills-layer {
+  position: absolute; inset: 0;
+  background-repeat: no-repeat;
+  background-position: 61% 48%;
+  background-size: contain;
+  opacity: 0;
+  transition: opacity 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity;
+}
+@media (max-width: 900px) { .stills-layer { background-position: 50% 42%; background-size: 118% auto; } }
+.stills-glow {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(circle at 61% 44%, rgba(79, 123, 255, 0.55), transparent 42%);
+  mix-blend-mode: screen; opacity: 0.2;
+}
+.stills-scan {
+  position: absolute; left: 0; right: 0; top: 0; height: 2px; z-index: 2; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(120, 190, 255, 0.85), transparent);
+  box-shadow: 0 0 14px 3px rgba(79, 123, 255, 0.6);
+  mix-blend-mode: screen; opacity: 0.55;
+  animation: scan 7s linear infinite;
+}
+@keyframes scan { 0% { transform: translateY(-6vh); } 100% { transform: translateY(104vh); } }
+.stills-vignette {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(ellipse 75% 80% at 61% 48%, transparent 55%, rgba(7, 8, 11, 0.85) 100%);
+}
+@media (prefers-reduced-motion: reduce) { .stills-scan { display: none; } }
+
 /* fixed full-viewport canvas behind everything */
 .scene-fixed {
   position: fixed;

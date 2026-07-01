@@ -29,6 +29,7 @@ export default function Stations() {
         onUpdate: (self) => {
           const p = self.progress;
           state.progress = p;
+          state.phase = 'stations';
           const pos = p * (N - 1); // 0 .. N-1
           const active = Math.round(pos);
           setActive(Math.min(N - 1, Math.max(0, active)));

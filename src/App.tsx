@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
+import { useEffect } from 'react';
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -7,30 +7,15 @@ import Stations from './components/Stations';
 import OffClock from './components/OffClock';
 import Contact from './components/Contact';
 import Hud from './components/Hud';
-import Fallback from './components/Fallback';
-import { hasWebGL, prefersReducedMotion } from './lib/webgl';
+import Stills from './components/Stills';
+import { prefersReducedMotion } from './lib/webgl';
 import { setActive, state } from './store';
 import { stations } from './data/stations';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Scene = lazy(() => import('./r3f/Scene'));
-
 export default function App() {
-  const webgl = useMemo(hasWebGL, []);
-  const [mobile, setMobile] = useState(
-    typeof window !== 'undefined' ? window.matchMedia('(max-width: 720px)').matches : false,
-  );
-
   useEffect(() => {
-    const mq = window.matchMedia('(max-width: 720px)');
-    const onChange = () => setMobile(mq.matches);
-    mq.addEventListener('change', onChange);
-    return () => mq.removeEventListener('change', onChange);
-  }, []);
-
-  useEffect(() => {
-    if (!webgl) return;
     const reduce = prefersReducedMotion();
 
     const lenis = new Lenis({
@@ -43,7 +28,6 @@ export default function App() {
     gsap.ticker.add(raf);
     gsap.ticker.lagSmoothing(0);
 
-    // closing sections (off-clock + contact) pull back to a wide shot of the whole body
     const tail = ScrollTrigger.create({
       trigger: '#contact',
       start: 'top center',
@@ -51,10 +35,10 @@ export default function App() {
         if (self.isActive) {
           setActive(stations.length - 1);
           state.zoom = 0;
+          state.phase = 'end';
         }
       },
     });
-    // the hero sits wide on the whole robot before the diagnostic begins
     const head = ScrollTrigger.create({
       trigger: '#top',
       start: 'top center',
@@ -63,6 +47,7 @@ export default function App() {
         if (self.isActive) {
           setActive(0);
           state.zoom = 0;
+          state.phase = 'hero';
         }
       },
     });
@@ -74,15 +59,11 @@ export default function App() {
       head.kill();
       lenis.destroy();
     };
-  }, [webgl]);
-
-  if (!webgl) return <Fallback />;
+  }, []);
 
   return (
     <>
-      <Suspense fallback={<div className="scene-fixed" aria-hidden="true" />}>
-        <Scene mobile={mobile} />
-      </Suspense>
+      <Stills />
       <Hud />
       <main className="overlay">
         <Hero />

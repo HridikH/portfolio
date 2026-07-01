@@ -19,6 +19,8 @@ export type ScrollState = {
   /** world center + radius of the whole body, used for the wide shot. */
   bodyCenter: THREE.Vector3;
   bodyRadius: number;
+  /** which part of the page we're in — selects hero vs per-station imagery. */
+  phase: 'hero' | 'stations' | 'end';
 };
 
 export const state: ScrollState = {
@@ -30,6 +32,7 @@ export const state: ScrollState = {
   radius: 1,
   bodyCenter: new THREE.Vector3(0, 0, 0),
   bodyRadius: 4,
+  phase: 'hero',
 };
 
 let activeSnapshot = 0;
