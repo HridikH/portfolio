@@ -31,22 +31,8 @@ export type Station = {
 
 export const stations: Station[] = [
   {
-    id: 'eeg',
-    no: 'PRJ-01',
-    region: 'brain',
-    hud: 'BRAIN / CORTEX',
-    anatomy: 'Neural cortex',
-    title: '8-Channel EEG Board',
-    blurb:
-      'Single-layer KiCad board for eight-channel EEG acquisition. Analog front end, electrode impedance handling, feeding a biomedical ML pipeline for NeuroTechX.',
-    tags: ['KiCad', 'PCB', 'EEG', 'Biomedical'],
-    link: 'https://github.com/HridikH/portfolio',
-    side: 'left',
-    bodyY: 0.06,
-  },
-  {
     id: 'ur3',
-    no: 'PRJ-02',
+    no: 'PRJ-01',
     region: 'eyes',
     hud: 'OPTIC / VISION',
     anatomy: 'Visual cortex',
@@ -61,7 +47,7 @@ export const stations: Station[] = [
   },
   {
     id: 'grogu',
-    no: 'PRJ-03',
+    no: 'PRJ-02',
     region: 'face',
     hud: 'FACE / EXPR',
     anatomy: 'Facial actuation',
@@ -75,7 +61,7 @@ export const stations: Station[] = [
   },
   {
     id: 'jarvis',
-    no: 'PRJ-04',
+    no: 'PRJ-03',
     region: 'jaw',
     hud: 'VOCAL / LANG',
     anatomy: 'Language center',
@@ -90,7 +76,7 @@ export const stations: Station[] = [
   },
   {
     id: 'kernel',
-    no: 'PRJ-05',
+    no: 'PRJ-04',
     region: 'spine',
     hud: 'SPINE / BUS',
     anatomy: 'Nervous system',
@@ -105,7 +91,7 @@ export const stations: Station[] = [
   },
   {
     id: 'crs',
-    no: 'PRJ-06',
+    no: 'PRJ-05',
     region: 'arms',
     hud: 'ARMS / HANDS',
     anatomy: 'Manipulators',
@@ -119,22 +105,8 @@ export const stations: Station[] = [
     bodyY: 0.52,
   },
   {
-    id: 'bb8',
-    no: 'PRJ-07',
-    region: 'core',
-    hud: 'CORE / GYRO',
-    anatomy: 'Balance core',
-    title: 'BB-8 Reaction-Wheel Robot',
-    blurb:
-      'A spherical robot held steady by a reaction wheel. IMU stabilization, embedded motor control, a SolidWorks body.',
-    tags: ['C++', 'IMU', 'SolidWorks', 'Embedded'],
-    link: 'https://github.com/HridikH/portfolio',
-    side: 'left',
-    bodyY: 0.6,
-  },
-  {
     id: 'pendulum',
-    no: 'PRJ-08',
+    no: 'PRJ-06',
     region: 'legs',
     hud: 'LEGS / VEST',
     anatomy: 'Vestibular balance',
