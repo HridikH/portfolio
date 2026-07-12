@@ -84,16 +84,24 @@ function RecordCard({ data, active }: { data: RecordSectionData; active: boolean
 }
 
 function StationCard({ s, active }: { s: Station; active: boolean }) {
+  const planned = !!s.status;
   return (
-    <div className={`card ${s.side} ${active ? 'active' : ''}`}>
+    <div className={`card ${s.side} ${planned ? 'planned' : ''} ${active ? 'active' : ''}`}>
       <div className="card-index">{s.no.replace('PRJ-', '')}</div>
       <div className="card-hud">
         <span className="card-no">{s.no}</span>
         <span className="card-region">{s.hud}</span>
+        {planned && <span className="card-status">{s.status}</span>}
       </div>
       <h2>{s.title}</h2>
       <div className="card-anatomy">{s.anatomy}</div>
       <p>{s.blurb}</p>
+      {s.progress && (
+        <div className="card-progress">
+          <span className="card-progress-label">Progress</span>
+          {s.progress}
+        </div>
+      )}
       {s.metric && <div className="card-metric">{s.metric}</div>}
       {s.media?.type === 'video' && (
         <video src={s.media.src} poster={s.media.poster} muted loop playsInline autoPlay={active} />
@@ -104,9 +112,13 @@ function StationCard({ s, active }: { s: Station; active: boolean }) {
           <span key={t}>{t}</span>
         ))}
       </div>
-      <a className="card-link" href={s.link} target="_blank" rel="noopener noreferrer">
-        View project ↗
-      </a>
+      {s.link ? (
+        <a className="card-link" href={s.link} target="_blank" rel="noopener noreferrer">
+          View project ↗
+        </a>
+      ) : planned ? (
+        <span className="card-link pending">In progress · repo coming</span>
+      ) : null}
     </div>
   );
 }
@@ -210,7 +222,7 @@ export default function App() {
             <h1>Hridik Hingorani</h1>
             <p className="hero-role">Robotics, controls, embedded systems.</p>
             <p className="hero-sub">
-              Eight projects, mapped head to toe on the robot. Scroll to run the check.
+              Nine projects, mapped head to toe on the robot. Scroll to run the check.
             </p>
             <p className="hero-note">
               The render is a Unitree G1 model, used here for visualization.

@@ -24,7 +24,9 @@ export type Station = {
   title: string;
   blurb: string;
   tags: string[];
-  link: string; // TODO: point each station at its real repo / report / demo
+  link?: string; // outbound repo/report/demo; omitted for planned/in-progress work
+  status?: string; // set on planned/in-progress projects -> amber "pending" treatment
+  progress?: string; // what's done so far, in place of a quantified result
   metric?: string; // one quantified result, rendered as a stat line
   media?: { type: 'video' | 'image'; src: string; poster?: string };
   side: 'left' | 'right';
@@ -33,9 +35,25 @@ export type Station = {
 
 export const stations: Station[] = [
   {
+    id: 'flexhand',
+    no: 'PRJ-01',
+    region: 'brain',
+    hud: 'BRAIN / MOTOR',
+    anatomy: 'Motor cortex',
+    title: 'Flex-Sensor Teleop Hand',
+    status: 'Planned / in progress',
+    blurb:
+      'A leader–follower teleoperation system: a flex-sensor glove drives a 5-DOF FlexiGrip robotic hand over ESP-NOW wireless, with a planned EMG muscle-sensor layer as a second, switchable input mode.',
+    progress:
+      'Electrical foundation designed and validated — a 5-channel flex-sensor-to-ESP32 interface board in KiCad, schematic capture through PCB layout, ERC/DRC clean and breadboard-validated before committing to fab.',
+    tags: ['ESP32', 'ESP-NOW', 'KiCad', 'PCA9685', 'Flex Sensors', 'EMG (planned)'],
+    side: 'left',
+    bodyY: 0.06,
+  },
+  {
     id: 'ur3',
     metric: '15 mm placement accuracy',
-    no: 'PRJ-01',
+    no: 'PRJ-02',
     region: 'eyes',
     hud: 'OPTIC / VISION',
     anatomy: 'Visual cortex',
@@ -51,7 +69,7 @@ export const stations: Station[] = [
   {
     id: 'grogu',
     metric: '22 DOF',
-    no: 'PRJ-02',
+    no: 'PRJ-03',
     region: 'face',
     hud: 'FACE / EXPR',
     anatomy: 'Facial actuation',
@@ -66,7 +84,7 @@ export const stations: Station[] = [
   {
     id: 'jarvis',
     metric: '30 ms wake-to-response',
-    no: 'PRJ-03',
+    no: 'PRJ-04',
     region: 'jaw',
     hud: 'VOCAL / LANG',
     anatomy: 'Language center',
@@ -82,7 +100,7 @@ export const stations: Station[] = [
   {
     id: 'kernel',
     metric: '6,000 lines of C',
-    no: 'PRJ-04',
+    no: 'PRJ-05',
     region: 'spine',
     hud: 'SPINE / BUS',
     anatomy: 'Nervous system',
@@ -98,7 +116,7 @@ export const stations: Station[] = [
   {
     id: 'crs',
     metric: '50 Hz control loop',
-    no: 'PRJ-05',
+    no: 'PRJ-06',
     region: 'arms',
     hud: 'ARMS / HANDS',
     anatomy: 'Manipulators',
@@ -114,7 +132,7 @@ export const stations: Station[] = [
   {
     id: 'pendulum',
     metric: '3 s settling time',
-    no: 'PRJ-06',
+    no: 'PRJ-07',
     region: 'legs',
     hud: 'LEGS / VEST',
     anatomy: 'Vestibular balance',
@@ -130,7 +148,7 @@ export const stations: Station[] = [
   {
     id: 'cartpole',
     metric: '1 kHz RK4 · scratch LQR',
-    no: 'PRJ-07',
+    no: 'PRJ-08',
     region: 'legs',
     hud: 'SIM / CTRL',
     anatomy: 'Motor control',
@@ -145,7 +163,7 @@ export const stations: Station[] = [
   {
     id: 'motionplanning',
     metric: 'A* 6–11% shorter · <20 ms',
-    no: 'PRJ-08',
+    no: 'PRJ-09',
     region: 'legs',
     hud: 'PLAN / NAV',
     anatomy: 'Path planning',
