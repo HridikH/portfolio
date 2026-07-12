@@ -240,6 +240,11 @@ body {
 .card.planned .card-index { color: rgba(181, 112, 26, 0.09); }
 .card.planned .card-region { color: var(--pending); }
 .card.planned .card-region::before { background: var(--pending); }
+.card.planned .card-metric {
+  color: var(--pending);
+  border-color: rgba(181, 112, 26, 0.3);
+  background: rgba(181, 112, 26, 0.06);
+}
 .card-status {
   font-family: var(--mono);
   font-size: 0.6rem;

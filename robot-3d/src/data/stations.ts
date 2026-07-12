@@ -74,10 +74,10 @@ export const stations: Station[] = [
     hud: 'FACE / EXPR',
     anatomy: 'Facial actuation',
     title: 'Animatronic Grogu',
+    status: 'Planned / in progress',
     blurb:
-      'ECE 445 capstone. A 22-DOF bipedal animatronic. Owned the software, the LLM pipeline (local LLM with Claude API, Whisper in, Coqui out), and the mechanical design. Custom PCB for power. It looks at you.',
+      'ECE 445 capstone. A 22-DOF bipedal animatronic. Will own the software, the LLM pipeline (local LLM with Claude API, Whisper in, Coqui out), and the mechanical design end to end, on a custom PCB for power. It will look at you.',
     tags: ['Python', 'C++', 'KiCad', 'ROS', 'LLM'],
-    link: 'https://github.com/HridikH/portfolio',
     side: 'left',
     bodyY: 0.2,
   },
