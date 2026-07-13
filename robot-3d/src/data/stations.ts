@@ -120,9 +120,9 @@ export const stations: Station[] = [
     region: 'arms',
     hud: 'ARMS / HANDS',
     anatomy: 'Manipulators',
-    title: '3-DOF CRS Force-Control Arm',
+    title: '6-DOF CRS Force-Control Arm',
     blurb:
-      'Hybrid force and position control on a three-DOF arm. Task-space impedance, a Jacobian transpose law, a fifty-hertz loop. Peg insertion, zig-zag, and pushing an egg without breaking it.',
+      'Hybrid force and position control on a six-DOF arm. Task-space impedance, a Jacobian transpose law, a fifty-hertz loop. Peg insertion, zig-zag, and pushing an egg without breaking it.',
     tags: ['MATLAB', 'ROS', 'Control Theory', 'C'],
     link: 'https://github.com/HridikH/portfolio',
     media: { type: 'video', src: `${BASE}media/crs-arm.mp4`, poster: `${BASE}media/crs-arm-poster.jpg` },
