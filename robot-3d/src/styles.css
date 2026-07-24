@@ -285,6 +285,16 @@ body {
   cursor: default;
 }
 .card-link.pending:hover { text-decoration: none; }
+/* Completed work with no public repo (e.g. private coursework): neutral marker, not a link. */
+.card-link.note {
+  color: var(--steel);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: default;
+}
+.card-link.note:hover { text-decoration: none; }
 
 /* ---------- record dossiers ---------- */
 .record { padding-top: 8rem; padding-bottom: 8rem; }

@@ -152,6 +152,8 @@ function StationCard({ s, active }: { s: Station; active: boolean }) {
         <span className="card-link pending">
           {s.phase === 'planned' ? 'Planned · not yet built' : 'In progress · repo coming'}
         </span>
+      ) : s.linkNote ? (
+        <span className="card-link note">{s.linkNote}</span>
       ) : null}
     </div>
   );

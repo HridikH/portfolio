@@ -31,6 +31,7 @@ export type Station = {
   blurb: string;
   tags: string[];
   link?: string; // outbound repo/report/demo; omitted when no verified URL exists yet
+  linkNote?: string; // shown in place of a link for completed work with no public repo (e.g. private coursework)
   phase?: Phase; // undefined == completed
   featuredRank?: number; // 1 = strongest; used for featured ordering, not body order
   progress?: string; // what is done so far, in place of a quantified result
@@ -108,9 +109,9 @@ export const stations: Station[] = [
     blurb:
       'A RISC-V kernel from scratch. Sv39 paging, VirtIO, a FAT filesystem, fork exec exit, pipes, a shell with redirection, and preemptive multitasking.',
     tags: ['C', 'RISC-V', 'Systems'],
-    // TODO(hridik): course OS project is likely private. Provide a public mirror, writeup, or demo link,
-    // or leave unlinked. Do not link the portfolio repo.
+    // Private ECE 391 coursework: not published, to respect course academic-integrity policy.
     link: undefined,
+    linkNote: 'Code available on request',
     media: { type: 'image', src: `${BASE}media/kernel-terminal.svg` },
     side: 'left',
     bodyY: 0.42,
