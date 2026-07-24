@@ -1,7 +1,7 @@
-// Tiny external store. The 3D scene reads `state` directly inside useFrame (no React
-// re-render per frame); React UI subscribes for the active-station index only.
+// Tiny external store. The scroll-cinema canvas reads `state` directly inside its
+// rAF loop (no React re-render per frame); the React UI subscribes only for the
+// active-station index, so the HUD updates without re-rendering on every scroll tick.
 import { useSyncExternalStore } from 'react';
-import * as THREE from 'three';
 
 export type ScrollState = {
   /** 0..1 across the stations region — drives the HUD traverse readout + bar. */
@@ -10,15 +10,8 @@ export type ScrollState = {
   active: number;
   /** target focus amount set by scroll: 0 = wide (whole body), 1 = framed on the part. */
   zoom: number;
-  /** smoothed zoom actually applied by the camera rig, surfaced to the HUD. */
+  /** smoothed focus actually surfaced to the HUD. */
   zoomDisp: number;
-  /** LIVE world-space center of the active part (recomputed every frame as it orbits). */
-  focus: THREE.Vector3;
-  /** world bounding radius of the active part, used to compute framing distance. */
-  radius: number;
-  /** world center + radius of the whole body, used for the wide shot. */
-  bodyCenter: THREE.Vector3;
-  bodyRadius: number;
   /** which part of the page we're in — selects hero vs per-station imagery. */
   phase: 'hero' | 'stations' | 'end';
 };
@@ -28,10 +21,6 @@ export const state: ScrollState = {
   active: 0,
   zoom: 0,
   zoomDisp: 0,
-  focus: new THREE.Vector3(),
-  radius: 1,
-  bodyCenter: new THREE.Vector3(0, 0, 0),
-  bodyRadius: 4,
   phase: 'hero',
 };
 

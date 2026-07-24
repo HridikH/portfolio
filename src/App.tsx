@@ -21,7 +21,7 @@ export default function App() {
     const lenis = new Lenis({
       duration: reduce ? 0.6 : 1.1,
       smoothWheel: !reduce,
-      lerp: reduce ? 0.2 : 0.09,
+      lerp: reduce ? 0.2 : 0.12, // 0.09 was floaty; the scrubber no longer double-smooths on top
     });
     lenis.on('scroll', ScrollTrigger.update);
     const raf = (t: number) => lenis.raf(t * 1000);

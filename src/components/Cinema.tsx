@@ -94,15 +94,30 @@ export default function Cinema() {
       });
       scrubber.start();
 
-      // capture any produced clips in the background; swap frames in when ready.
-      // (Empty URLs return [] instantly, so the fallback stills just stay.)
+      // Capture produced clips ONE AT A TIME (never several decodes at once — that
+      // is what janks the first load / phones). Dedupe by URL, then assign the
+      // captured frames to every act that shares it. Empty URLs are skipped, so the
+      // fallback stills just stay. A short idle gap lets first paint settle first.
       if (!reduced) {
+        const order = ['upper', 'open', 'macro', 'orbit']; // spine (descent clip) first; 'lower' shares its URL
+        const byUrl = new Map<string, LoadedAct[]>();
         for (const la of loaded) {
           if (!la.act.clipUrl) continue;
-          captureClip(la.act.clipUrl).then((frames) => {
-            if (!disposed && frames.length) la.frames = frames;
-          });
+          const arr = byUrl.get(la.act.clipUrl) ?? [];
+          arr.push(la);
+          byUrl.set(la.act.clipUrl, arr);
         }
+        const urls = [...byUrl.entries()].sort(
+          (a, b) => order.indexOf(a[1][0].act.id) - order.indexOf(b[1][0].act.id),
+        );
+        const runNext = async (i: number) => {
+          if (disposed || i >= urls.length) return;
+          const [url, acts] = urls[i];
+          const frames = await captureClip(url);
+          if (!disposed && frames.length) for (const la of acts) la.frames = frames;
+          setTimeout(() => runNext(i + 1), 200); // yield between clips
+        };
+        setTimeout(() => runNext(0), 600);
       }
     })();
 
@@ -116,6 +131,9 @@ export default function Cinema() {
   return (
     <div className="cinema-fixed" aria-hidden="true">
       <canvas ref={canvasRef} className="cinema-canvas" />
+      {/* static, GPU-composited darkening + accent floor glow (no per-frame canvas work) */}
+      <div className="cinema-overlays" />
+      <div className="cinema-floor" />
     </div>
   );
 }

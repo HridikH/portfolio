@@ -1,7 +1,7 @@
 // The site: fixed WebGL stage + native scroll column driving the camera rig.
-// Sections: hero, 8 stations (from stations.ts, single source of truth),
+// Sections: hero, project stations (from stations.ts, single source of truth),
 // off the clock, contact.
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { Component, ReactNode, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { Canvas } from '@react-three/fiber';
 import RobotModel from './three/RobotModel';
@@ -14,6 +14,23 @@ import { stations, links, offClock, contact, Station, Region } from './data/stat
 import { recordSections, phone, RecordSectionData } from './data/resume';
 
 const SECTIONS = 1 + stations.length + recordSections.length + 2;
+
+// Catches any failure inside the WebGL stage (GLB decode error, lost context,
+// Three.js init failure) so the whole page never blanks out. On error we fall
+// back to the static robot poster + body-mapped cards instead of a dead canvas.
+class StageErrorBoundary extends Component<{ onError: () => void; children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  componentDidCatch(error: unknown) {
+    console.error('[stage] robot render failed, using static fallback:', error);
+    this.props.onError();
+  }
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
+}
 
 // Per-section scroll mapping: measures actual .panel offsets so sections of
 // unequal height (the record dossiers) stay aligned with camera keyframes.
@@ -84,14 +101,19 @@ function RecordCard({ data, active }: { data: RecordSectionData; active: boolean
 }
 
 function StationCard({ s, active }: { s: Station; active: boolean }) {
-  const planned = !!s.status;
+  const pending = s.phase === 'in-progress' || s.phase === 'planned';
+  const badge = s.phase === 'in-progress' ? 'In progress' : s.phase === 'planned' ? 'Planned' : null;
   return (
-    <div className={`card ${s.side} ${planned ? 'planned' : ''} ${active ? 'active' : ''}`}>
-      <div className="card-index">{s.no.replace('PRJ-', '')}</div>
+    <div className={`card ${s.side} ${pending ? 'planned' : ''} ${active ? 'active' : ''}`}>
+      <div className="card-index" aria-hidden="true">{s.no.replace('PRJ-', '')}</div>
       <div className="card-hud">
         <span className="card-no">{s.no}</span>
         <span className="card-region">{s.hud}</span>
-        {planned && <span className="card-status">{s.status}</span>}
+        {badge && (
+          <span className="card-status" role="status">
+            {badge}
+          </span>
+        )}
       </div>
       <h2>{s.title}</h2>
       <div className="card-anatomy">{s.anatomy}</div>
@@ -104,9 +126,19 @@ function StationCard({ s, active }: { s: Station; active: boolean }) {
       )}
       {s.metric && <div className="card-metric">{s.metric}</div>}
       {s.media?.type === 'video' && (
-        <video src={s.media.src} poster={s.media.poster} muted loop playsInline autoPlay={active} />
+        <video
+          src={s.media.src}
+          poster={s.media.poster}
+          muted
+          loop
+          playsInline
+          autoPlay={active}
+          aria-label={`${s.title} demonstration`}
+        />
       )}
-      {s.media?.type === 'image' && <img src={s.media.src} alt="" loading="lazy" />}
+      {s.media?.type === 'image' && (
+        <img src={s.media.src} alt={`${s.title} preview`} loading="lazy" />
+      )}
       <div className="card-tags">
         {s.tags.map((t) => (
           <span key={t}>{t}</span>
@@ -116,8 +148,10 @@ function StationCard({ s, active }: { s: Station; active: boolean }) {
         <a className="card-link" href={s.link} target="_blank" rel="noopener noreferrer">
           View project ↗
         </a>
-      ) : planned ? (
-        <span className="card-link pending">In progress · repo coming</span>
+      ) : pending ? (
+        <span className="card-link pending">
+          {s.phase === 'planned' ? 'Planned · not yet built' : 'In progress · repo coming'}
+        </span>
       ) : null}
     </div>
   );
@@ -137,6 +171,7 @@ export default function App() {
   const reduced = useMemo(prefersReducedMotion, []);
   const hasWebGL = useMemo(webglAvailable, []);
   const [modelReady, setModelReady] = useState(false);
+  const [robotFailed, setRobotFailed] = useState(false);
   const [mode] = useState<PaletteMode>('light'); // palette swappable here
   const { progress, section } = useScrollProgress(reduced);
   const mouse = useRef({ x: 0, y: 0 });
@@ -158,14 +193,36 @@ export default function App() {
     return () => window.removeEventListener('mousemove', onMove);
   }, [reduced, tier]);
 
-  // No WebGL (restricted networks, old drivers): static single-column page.
-  const staticMode = !hasWebGL;
+  // Watchdog: if the model has not reported ready within 12s (silent GLB/decoder
+  // failure, wedged context), give up on the interactive stage and show the
+  // static fallback rather than leaving a blank area.
+  useEffect(() => {
+    if (!hasWebGL || modelReady || robotFailed) return;
+    const t = window.setTimeout(() => setRobotFailed(true), 12000);
+    return () => window.clearTimeout(t);
+  }, [hasWebGL, modelReady, robotFailed]);
+
+  // Static view when WebGL is unavailable OR the interactive robot failed to load.
+  // Either way we keep the poster + body-mapped cards so the concept survives.
+  const staticView = !hasWebGL || robotFailed;
+
+  const BASE = import.meta.env.BASE_URL;
 
   return (
-    <div className={`site ${staticMode ? 'static' : ''}`} data-mode={mode}>
-      {!staticMode && (
+    <div className={`site ${staticView ? 'static' : ''}`} data-mode={mode}>
+      {staticView && (
+        <div className="stage-fixed stage-fallback">
+          <img
+            className="hero-poster"
+            src={`${BASE}poster.jpg`}
+            alt="Unitree G1 humanoid robot. Projects are mapped to its body regions in the cards below."
+          />
+        </div>
+      )}
+      {!staticView && (
+      <StageErrorBoundary onError={() => setRobotFailed(true)}>
       <div className="stage-fixed">
-        {!modelReady && <img className="hero-poster" src={`${import.meta.env.BASE_URL}poster.jpg`} alt="" />}
+        {!modelReady && <img className="hero-poster" src={`${BASE}poster.jpg`} alt="" />}
         <Canvas
           shadows
           dpr={tier === 'low' ? [1, 1.5] : [1, 2]}
@@ -200,6 +257,7 @@ export default function App() {
           />
         </Canvas>
       </div>
+      </StageErrorBoundary>
       )}
 
       {/* HUD: name + status left/center, persistent actions right */}
@@ -225,7 +283,9 @@ export default function App() {
               Nine projects, mapped head to toe on the robot. Scroll to run the check.
             </p>
             <p className="hero-note">
-              The render is a Unitree G1 model, used here for visualization.
+              {staticView
+                ? 'Static view: the interactive robot could not load. Projects are mapped head to toe below.'
+                : 'The render is a Unitree G1 model, used here for visualization.'}
             </p>
             <div className="scroll-cue">▼</div>
           </div>

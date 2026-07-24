@@ -1,0 +1,87 @@
+%----------------------------------------------------------------------------------------
+% Hridik Hingorani — full CV
+% Adapted from the ModernCV template (Xavier Danaux, CC BY-NC-SA 3.0,
+% http://www.LaTeXTemplates.com). Style: classic / blue.
+% Content source of truth: the portfolio site (stations.ts + resume.ts).
+% Build: pdflatex cv.tex (headshot.jpg must sit next to this file)
+%----------------------------------------------------------------------------------------
+\documentclass[11pt,letterpaper,sans]{moderncv}
+\moderncvstyle{classic}
+\moderncvcolor{blue}
+% fontawesome5 isn't in this TeX install; a local stub .sty provides the icons
+\usepackage[scale=0.88]{geometry}
+
+%---------------------------------------------------------------------------
+% Name and contact
+%---------------------------------------------------------------------------
+\firstname{HRIDIK}
+\familyname{HINGORANI}
+\title{Curriculum Vitae}
+\address{Champaign, IL}{}
+\mobile{(447) 902-5994}
+\email{hridikh2@illinois.edu}
+\homepage{hridikh.github.io/portfolio}
+\extrainfo{github.com/HridikH \quad linkedin.com/in/HridikH}
+\photo[70pt][0.4pt]{headshot}
+
+\begin{document}
+\makecvtitle
+
+%---------------------------------------------------------------------------
+\section{Education}
+\cventry{Expected May 2027}{BS Computer Engineering, Minor in Mathematics}{University of Illinois at Urbana-Champaign}{}{}{}
+\cvitem{Coursework}{ECE 470 Introduction to Robotics, ECE 489 Robot Dynamics and Control, ECE 486 Control Systems, ECE 391 Operating Systems, ECE 385 FPGA Design, ECE 210 Analog Signal Processing, CS 225 Data Structures (C++), MATH 257 Linear Algebra}
+
+%---------------------------------------------------------------------------
+\section{Experience}
+\cventry{May 2026 -- present}{AI Intern}{Software Associates}{North Potomac, MD}{}{
+\begin{itemize}
+\item Built an AI-powered algorithmic trading bot in Python. Multi-indicator signal engine (RSI, MACD, Bollinger Bands, SMA/EMA, ATR) generates weighted BUY/SELL/HOLD signals with confidence scoring.
+\item Integrated Interactive Brokers Client Portal REST API for live market data, historical bar fetching, and automated order execution with session keepalive.
+\item Implemented ATR-based dynamic position sizing and automated risk controls (stop-loss, take-profit, trailing stop), capping per-trade portfolio exposure at 1\%.
+\item Built a real-time Flask + JavaScript dashboard with auto-refreshing signal cards, live P\&L tracking, open positions table, and full trade history log. Modular 6-file architecture across signal generation, risk management, and broker connectivity.
+\end{itemize}}
+\cventry{May 2025 -- Aug 2025}{AI Software Development Intern}{HealthArk Insights}{Mumbai, India}{}{
+\begin{itemize}
+\item Built Python-based document-processing features including summarization, web scraping, and dynamic formatting tools tailored to client specifications.
+\item Integrated client feedback into production workflows by gathering requirements, validating features, and refining document-management functionality. Features shipped to production.
+\end{itemize}}
+
+%---------------------------------------------------------------------------
+\section{Projects}
+\cventry{Jan 2024 -- Aug 2025}{StethoSpy: Electronic Stethoscope}{Project Lead, I-MADE UIUC}{}{}{Electronic stethoscope enabling cardiac murmur detection and myocardial infarction diagnosis in non-connected and rural areas without diagnostic infrastructure. Custom PCB captures heart sounds; an ADC/DAC pipeline processes the analog signal to identify cardiac irregularities and produce readable diagnostic output. Owned hardware design and signal processing end to end.}
+\cventry{}{8-Channel EEG Acquisition Board}{Independent research}{}{}{8-channel, 2-layer EEG signal acquisition board in KiCad. Op-amp analog front end with low-pass filtering for microvolt-level biopotential acquisition; schematic capture through PCB layout designed for high signal integrity across all eight channels.}
+\cventry{}{UR3 Vision-Guided Arm}{Python, ROS, OpenCV, C++}{}{}{OpenCV detection, RRT and A* path planning, and real-time pose estimation driving pick-and-place on a UR3. ROS integration. 15-millimeter placement.}
+\cventry{}{3-DOF CRS Force-Control Arm}{MATLAB, ROS, C}{}{}{Hybrid force and position control on a three-DOF arm: task-space impedance, a Jacobian transpose law, a fifty-hertz loop. Peg insertion, zig-zag tracking, and pushing an egg without breaking it.}
+\cventry{}{We\_Are\_Kernel: RISC-V OS}{C, RISC-V}{}{}{A RISC-V kernel from scratch, roughly 6,000 lines of C: Sv39 paging, VirtIO, a FAT filesystem, fork/exec/exit, pipes, a shell with redirection, and preemptive multitasking.}
+\cventry{}{Animatronic Grogu}{Python, C++, KiCad, ROS}{}{}{ECE 445 capstone. A 22-DOF bipedal animatronic. Owned the software, the LLM pipeline (local LLM with Claude API, Whisper speech-to-text, Coqui text-to-speech), and the mechanical design. Custom PCB for power.}
+\cventry{}{Jarvis Voice Assistant}{Python, LLM, Whisper}{}{}{Local-first voice assistant: wake word, Whisper STT, Coqui TTS, a hybrid local LLM and Claude API, and modular tool use. 30 ms wake-to-response.}
+\cventry{}{BB-8 Reaction-Wheel Robot}{C++, IMU, SolidWorks}{}{}{Spherical robot held steady by a reaction wheel: IMU stabilization, embedded motor control, a SolidWorks body.}
+\cventry{}{LQR Inverted Pendulum}{MATLAB, Embedded}{}{}{Inverted pendulum held upright by full-state LQR with a 3-second settling time, simulated in MATLAB and then made to stand up in hardware.}
+
+%---------------------------------------------------------------------------
+\section{Teaching Experience}
+\cventry{Aug 2025 -- present}{Course Assistant, ECE 385 (FPGA Design)}{University of Illinois at Urbana-Champaign}{}{}{Supported 100+ students in SystemVerilog-based FPGA labs covering finite state machines, datapaths, memory systems, VGA output, simulation, synthesis, testbench verification, and hardware debugging. Debugged student designs during office hours and lab sections, root-causing failures in timing, reset logic, module interfaces, and FPGA deployment.}
+\cventry{Jan 2025 -- Dec 2025}{Course Assistant, MATH 257 (Linear Algebra)}{University of Illinois at Urbana-Champaign}{}{}{Taught Python-based linear algebra lab sections to approximately 200 students, supporting hands-on computational exercises.}
+
+%---------------------------------------------------------------------------
+\section{Research}
+\cventry{Ongoing}{Project Lead, Brainwaves Team}{NeuroTechX UIUC}{}{}{Leads the Brainwaves project team, overseeing the club's podcast and social media output. EEG signal-processing and neural-network research through the club.}
+\cventry{Ongoing}{Independent EEG Research}{Self-directed}{}{}{Independently designed and built the 8-channel EEG acquisition board listed under Projects; separate from the club work.}
+
+%---------------------------------------------------------------------------
+\section{Leadership}
+\cventry{Jan 2025 -- present}{Event Lead, then Senior Coordinator, National Team}{Hindu YUVA}{}{}{Manages the UIUC chapter and the event team. Organizes large-scale Hindu cultural and community events at both chapter and national scope.}
+\cventry{Jan 2024 -- Aug 2025}{Project Lead, StethoSpy}{I-MADE UIUC}{}{}{Led the StethoSpy project (see Projects), owning hardware design and signal processing end to end.}
+
+%---------------------------------------------------------------------------
+\section{Skills}
+\cvitem{Languages}{Python, C, C++, MATLAB, SystemVerilog, JavaScript}
+\cvitem{Hardware}{KiCad (schematic capture, PCB layout), FPGA design, analog front ends, ADC/DAC pipelines, IMU integration, SolidWorks}
+\cvitem{Robotics \& software}{ROS, OpenCV, control theory (LQR, impedance/force control), Flask, REST APIs (Interactive Brokers), Whisper, Coqui TTS, Claude API, LLM integration}
+
+%---------------------------------------------------------------------------
+\section{Off the Clock}
+\cvitem{Writing}{Poetry and literary fiction. The poems lean on Mumbai-specific references, Hinglish code-switching, and language kept precise. Posted, fairly regularly, on Instagram.}
+
+\end{document}

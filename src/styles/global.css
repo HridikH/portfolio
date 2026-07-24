@@ -1,13 +1,15 @@
 :root {
-  --void: #070708;
-  --paper: #ece7de;
-  /* unified on cyan (sampled from the robot's visor); cool blue is the secondary */
-  --amber: #33d1e8;
-  --amber-dim: rgba(51, 209, 232, 0.42);
-  --violet: #6aa8ff;
-  --steel: #7d828c;
-  --steel-dim: #3a3e46;
-  --line: rgba(180, 190, 205, 0.12);
+  /* APPLE LIGHT THEME (2026-07-02). Var names are legacy (--void is now the
+     light stage, --amber is the accent) — kept so nothing else had to move. */
+  --void: #f5f5f7;
+  --paper: #1d1d1f;
+  /* accent: Apple link blue; secondary: deeper blue for italics/pull quotes */
+  --amber: #0071e3;
+  --amber-dim: rgba(0, 113, 227, 0.42);
+  --violet: #0066cc;
+  --steel: #6e6e73;
+  --steel-dim: #aeaeb2;
+  --line: rgba(0, 0, 0, 0.12);
   --serif: 'Instrument Serif', Georgia, serif;
   --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
@@ -32,8 +34,28 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ---------- scroll-cinema stage ---------- */
-.cinema-fixed { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: #070708; }
-.cinema-canvas { display: block; width: 100%; height: 100%; }
+/* The canvas paints only the frame; grade + velocity blur are applied as a CSS
+   filter on this element by the scrubber (GPU compositor, not per-pixel 2D work).
+   The darkening + accent glow are static layers on top, so scrolling never
+   recomputes them. */
+.cinema-fixed { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: #f5f5f7; }
+.cinema-canvas {
+  position: absolute; inset: 0; display: block; width: 100%; height: 100%;
+  will-change: filter;
+}
+.cinema-overlays {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(245,245,247,0.9) 0%, rgba(245,245,247,0) 20%),
+    linear-gradient(0deg, rgba(245,245,247,0.94) 0%, rgba(245,245,247,0) 26%),
+    radial-gradient(ellipse 66% 60% at 50% 46%, rgba(245,245,247,0) 48%, rgba(245,245,247,0.4) 100%);
+}
+.cinema-floor {
+  /* soft contact-shadow wash grounding the subject on the white sweep */
+  position: absolute; left: 0; right: 0; bottom: 0; height: 34%;
+  pointer-events: none; mix-blend-mode: multiply;
+  background: radial-gradient(ellipse 62% 90% at 50% 100%, rgba(29,29,31,0.1), rgba(255,255,255,0) 70%);
+}
 
 /* ---------- hyperreal stills scene (legacy fallback styles) ---------- */
 .stills-fixed {
@@ -73,7 +95,7 @@ a { color: inherit; text-decoration: none; }
   position: fixed;
   inset: 0;
   z-index: 0;
-  background: radial-gradient(ellipse 90% 70% at 50% 20%, #0c0e14 0%, var(--void) 70%);
+  background: radial-gradient(ellipse 90% 70% at 50% 20%, #ffffff 0%, var(--void) 70%);
 }
 .scene-fixed canvas { display: block; }
 
@@ -155,7 +177,7 @@ a { color: inherit; text-decoration: none; }
 .station.right { justify-content: flex-end; }
 .station-card {
   width: min(440px, 92%);
-  background: rgba(8, 10, 14, 0.66);
+  background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px);
   border: 1px solid var(--line);
   border-left: 2px solid var(--amber);
@@ -176,7 +198,7 @@ a { color: inherit; text-decoration: none; }
 .station-card p { color: var(--steel); font-size: 0.92rem; margin-top: 0.8rem; }
 .station-media {
   margin-top: 1.1rem; border: 1px solid var(--line); border-radius: 2px;
-  overflow: hidden; aspect-ratio: 16 / 10; background: #0a0c11;
+  overflow: hidden; aspect-ratio: 16 / 10; background: #e8e8ed;
 }
 .station-media video, .station-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; list-style: none; }
@@ -214,7 +236,9 @@ a { color: inherit; text-decoration: none; }
 .btn {
   font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.06em; text-transform: uppercase;
   padding: 0.7rem 1.2rem; border-radius: 2px; border: 1px solid var(--line); color: var(--paper);
-  transition: border-color 0.2s, color 0.2s, transform 0.2s;
+  background: rgba(255, 255, 255, 0.6); -webkit-appearance: none; appearance: none; cursor: pointer;
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  transition: border-color 0.2s, color 0.2s, transform 0.2s, background 0.2s;
 }
 .btn:hover { border-color: var(--amber); color: var(--amber); transform: translateY(-2px); }
 .btn.primary { background: var(--amber); color: var(--void); border-color: var(--amber); font-weight: 500; }
@@ -228,6 +252,17 @@ a { color: inherit; text-decoration: none; }
 .contact-email { font-family: var(--mono); font-size: 1rem; color: var(--paper); }
 .muted { color: var(--steel); font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.04em; margin-top: 1.4rem; }
 .muted .ok { color: var(--amber); }
+
+/* ---------- legibility over the robot ---------- */
+/* Light theme: dark text over a bright subject gets a soft WHITE halo
+   (not a box) so it reads without hiding the subject behind it. */
+.hero .eyebrow, .hero .tagline, .hero .sub, .scroll-cue,
+.beat .label, .beat p, .contact-email, .muted {
+  text-shadow: 0 1px 2px rgba(245, 245, 247, 0.92), 0 2px 20px rgba(245, 245, 247, 0.7);
+}
+.hero h1, .beat h2, .pull {
+  text-shadow: 0 2px 6px rgba(245, 245, 247, 0.92), 0 4px 40px rgba(245, 245, 247, 0.72);
+}
 
 footer {
   font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; color: var(--steel-dim);

@@ -7,3 +7,6 @@ dist-ssr
 npm-debug.log*
 .vite
 sp26_ece391_We_Are_Kernel/
+
+# vite writes these when loading a TS config; mounted FS blocks auto-cleanup
+vite.config.ts.timestamp-*.mjs

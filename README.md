@@ -1,13 +1,21 @@
-# Hridik Hingorani — Portfolio (WebGL rebuild)
+# Hridik Hingorani — Portfolio (scroll-cinema)
 
-A full-page WebGL site. The viewport is a 3D canvas; scrolling runs a diagnostic down a
-humanoid robot, head to toe. Each body region is a station that maps to a project. When
-the camera arrives, that region lights sodium-amber and the project content fades in over
-the canvas. A fixed corner HUD reads like telemetry.
+A full-page site that runs a diagnostic down a humanoid robot, head to toe. Scrolling scrubs
+a **pre-rendered, frame-scrubbed cinematic** painted to a canvas — nothing renders in real
+time. Each body region is a station that maps to a project; when the traverse arrives, that
+region's label pulses cyan and the project content fades in over the graded stage. A fixed
+corner HUD reads like telemetry.
 
-Built with Vite, React, TypeScript, react-three-fiber, drei, Three.js, GSAP + ScrollTrigger,
-and Lenis. Single bright color (amber) on a near-black blue void; literary serif for
-display, clean sans for body, mono for labels.
+Built with **Vite + React 18 + TypeScript**, GSAP + ScrollTrigger for section reveals, Lenis
+for smooth scroll, and a hand-written rAF scrubber (`src/cinema/`). No Three.js, no live GPU
+work — the only heavy step is a one-time client-side frame capture. Single accent (cyan,
+sampled from the robot's visor) on a `#070708` near-black void; literary serif for display,
+clean sans for body, mono for labels.
+
+> This is the `scroll-cinema` branch. It replaces the earlier real-time WebGL build
+> (`webgl-rebuild` / `hyperreal-stills`). The three.js / react-three-fiber layer is gone from
+> the shipped bundle; the old `src/r3f/` sources remain on disk but are excluded from the
+> build (`tsconfig` `exclude`) and imported by nothing.
 
 ## Run locally
 
@@ -43,21 +51,24 @@ A `.nojekyll` file is included so the `assets/` folder is served untouched.
 
 ```
 src/
-  App.tsx                Lenis + ScrollTrigger setup, WebGL gate, lazy-loads the scene
-  store.ts               tiny external store (scene reads it per-frame; UI subscribes)
+  App.tsx                Lenis + ScrollTrigger setup, mounts the cinema canvas + overlay
+  store.ts               tiny external store (canvas reads it per-frame; UI subscribes)
   data/stations.ts       SINGLE SOURCE OF TRUTH — projects, copy, links, region mapping
-  lib/webgl.ts           WebGL + reduced-motion detection
-  r3f/
-    Scene.tsx            <Canvas> wrapper (lazy chunk)
-    Experience.tsx       lights, camera traverse, mouse parallax, starfield
-    Humanoid.tsx         segmented primitive humanoid; SWAP POINT for the GLB
+  lib/webgl.ts           reduced-motion detection (+ legacy WebGL probe)
+  cinema/                THE ENGINE (self-contained scroll-cinema module)
+    assets.ts            THE ONE FILE YOU EDIT — clip URLs, act spans, grade constants
+    capture.ts           play clip once -> requestVideoFrameCallback -> WebP frames
+    idb.ts               IndexedDB cache of WebP frame sequences (store "hh-scroll")
+    scrubber.ts          rAF loop: scroll -> frame index -> drawImage, grade/vignette/glow
   components/
-    Hud.tsx              corner telemetry (region, project id, depth, traverse %)
+    Cinema.tsx           mounts the canvas, loads stills, captures clips, runs the scrubber
+    Hud.tsx              corner telemetry (region, project id, focus %, traverse %)
     Hero.tsx             name, eyebrow, tagline
-    Stations.tsx         per-station overlay cards, ScrollTrigger fades + region pinning
+    Stations.tsx         per-station overlay cards, ScrollTrigger fades + active region
     OffClock.tsx         writer / off-the-clock beat
     Contact.tsx          real links, copy-email, resume
-    Fallback.tsx         graceful 2D version when WebGL is unavailable
+    Fallback.tsx         graceful 2D version (no-canvas), Stills.tsx (legacy DOM stills)
+  r3f/                   LEGACY real-time WebGL — excluded from build, imported by nothing
 ```
 
 ## Notes

@@ -74,10 +74,10 @@ body {
 .scroll-col { position: relative; z-index: 2; }
 
 .panel {
-  min-height: 100vh;
+  min-height: 86vh;
   display: flex;
   align-items: center;
-  padding: 4rem 6vw;
+  padding: 3rem 6vw;
 }
 
 /* hero */
@@ -392,17 +392,32 @@ blockquote {
 }
 .viewer-hint { margin-top: 0.6rem; color: var(--steel); }
 
+/* ---------- keyboard focus (accessibility) ---------- */
+a:focus-visible,
+button:focus-visible,
+.btn:focus-visible,
+.hud-actions a:focus-visible,
+.card-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   .scroll-cue { animation: none; }
   .card { opacity: 1; transform: none; transition: none; }
 }
 
-/* ---------- static fallback (no WebGL) ---------- */
+/* ---------- static fallback (no WebGL, or robot failed to load) ---------- */
 .site.static .panel { min-height: 0; padding-top: 3rem; padding-bottom: 3rem; }
 .site.static .card { opacity: 1; transform: none; margin: 0 auto; }
 .site.static .hero { min-height: 60vh; }
 .site.static .scroll-cue { display: none; }
+/* Faint robot poster kept behind the cards so the body-map concept survives
+   without the interactive render, and stays readable underneath the cards. */
+.stage-fallback .hero-poster { opacity: 0.22; filter: saturate(0.85); }
+.site.static .card { background: rgba(255, 255, 255, 0.96); }
 
 /* ---------- mobile: single readable column, no text/robot collision ---------- */
 @media (max-width: 640px) {
