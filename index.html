@@ -9,7 +9,7 @@
       content="A diagnostic walk down a humanoid robot. Nine projects, head to toe. Robotics, controls, embedded systems."
     />
     <link rel="preload" href="/portfolio/models/g1.glb" as="fetch" crossorigin />
-    <script type="module" crossorigin src="/portfolio/assets/main-DcMY3KRC.js"></script>
+    <script type="module" crossorigin src="/portfolio/assets/main-CpbALfyL.js"></script>
     <link rel="modulepreload" crossorigin href="/portfolio/assets/styles-n9g1SVqk.js">
     <link rel="stylesheet" crossorigin href="/portfolio/assets/styles-C6m0ViQx.css">
   </head>
@@ -21,16 +21,15 @@
         <p>Robotics, controls, embedded systems. The interactive version of this site needs JavaScript; the projects are listed below.</p>
         <p style="font-size: 0.9rem; color: #6e6e73;">Completed work first. In-progress and planned items are labeled.</p>
         <ul style="line-height: 1.7;">
-          <li><strong><a href="https://github.com/HridikH/ME446_repo" style="color: #0071e3;">CRS Arm Task-Space Impedance Controller</a></strong> · task-space PD impedance via Jacobian transpose, 1 kHz joint-torque loop in C on a TMS320F28335</li>
-          <li><strong><a href="https://github.com/HridikH/ur3-image-drawing" style="color: #0071e3;">UR3 Image-to-Motion Drawing Arm</a></strong> · from-scratch closed-form 6-DOF inverse kinematics, product-of-exponentials forward kinematics, OpenCV contour extraction, ROS</li>
-          <li><strong>We_Are_Kernel, RISC-V OS</strong> · preemptive multitasking, Sv39 paging, 6,000 lines of C · <em>code available on request</em></li>
-          <li><strong>Flex-Sensor Teleop Hand</strong> · <em>in progress</em> · flex-sensor glove streaming over ESP-NOW to a 5-DOF hand; 5-channel ESP32 interface board designed in KiCad</li>
-          <li><strong>LQR Inverted Pendulum</strong> · full-state LQR, 3 s settling time</li>
-          <li><strong><a href="https://github.com/HridikH/cart-pole-control" style="color: #0071e3;">Cart-Pole Control Simulator</a></strong> · Rust CLI, RK4 at 1 kHz, scratch LQR via Riccati iteration</li>
-          <li><strong><a href="https://github.com/HridikH/motion-planning-visualizer" style="color: #0071e3;">Motion Planning Visualizer: A* vs RRT*</a></strong> · from-scratch A* and RRT*, A* 6 to 11% shorter paths under 20 ms</li>
-          <li><strong><a href="https://github.com/HridikH/JupiterAI" style="color: #0071e3;">Jupiter AI</a></strong> · fully local voice assistant on Apple Silicon; Whisper STT, Qwen3 on MLX, Kokoro TTS, real barge-in</li>
-          <li><strong>Flex-Sensor Teleop Hand</strong> · <em>in progress</em> · flex-sensor glove driving a 5-DOF FlexiGrip hand over ESP-NOW; 5-channel ESP32 interface board designed in KiCad</li>
+          <li><strong>Real-Time Task-Space Impedance Control, CRS Arm</strong> · 1 kHz task-space impedance controller in C on a TMS320F28335 DSP, joint torque commands to a 3-joint arm, 5 N&middot;m saturation</li>
+          <li><strong><a href="https://github.com/HridikH/ur3-image-drawing" style="color: #0071e3;">UR3 Vision-Guided Contour Drawing</a></strong> · from-scratch closed-form 6-DOF inverse kinematics, product-of-exponentials forward kinematics, Canny and contour extraction, 142-stroke drawing in 7 minutes</li>
+          <li><strong>RISC-V Preemptive Multitasking OS Kernel</strong> · roughly 6,000 lines of C, preemptive scheduler, Sv39 three-level paging, VirtIO, FAT, pipes, shell · <em>code available on request</em></li>
+          <li><strong>Flex-Sensor Teleoperated Hand</strong> · <em>in progress</em> · 5-channel flex-sensor board routed in KiCad, ESP-NOW leader-follower link, PCA9685 servo output</li>
           <li><strong>Animatronic Grogu</strong> · <em>planned</em> · 22-DOF bipedal animatronic with an LLM voice pipeline (ECE 445 capstone)</li>
+          <li><strong><a href="https://github.com/HridikH/JupiterAI" style="color: #0071e3;">Jupiter AI</a></strong> · fully local voice assistant on Apple Silicon; Whisper STT, Qwen3 on MLX, Kokoro TTS, real barge-in</li>
+          <li><strong>LQR Inverted Pendulum</strong> · full-state LQR, 3 s settling time</li>
+          <li><strong><a href="https://github.com/HridikH/cart-pole-control" style="color: #0071e3;">Cart-Pole Control Simulator</a></strong> · Rust, scratch LQR via discrete Riccati iteration, 6 gain presets benchmarked against tuned PID, RK4 at 1 kHz</li>
+          <li><strong><a href="https://github.com/HridikH/motion-planning-visualizer" style="color: #0071e3;">Motion Planning Visualizer: A* vs RRT*</a></strong> · from-scratch A* and RRT*, A* 6 to 11% shorter paths under 20 ms</li>
         </ul>
         <p>
           <a href="/portfolio/media/Hridik_Hingorani_Resume.pdf" style="color: #0071e3;">Resume (PDF)</a> ·
