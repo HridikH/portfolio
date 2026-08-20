@@ -195,14 +195,12 @@ export default function App() {
     return () => window.removeEventListener('mousemove', onMove);
   }, [reduced, tier]);
 
-  // Watchdog: if the model has not reported ready within 12s (silent GLB/decoder
-  // failure, wedged context), give up on the interactive stage and show the
-  // static fallback rather than leaving a blank area.
-  useEffect(() => {
-    if (!hasWebGL || modelReady || robotFailed) return;
-    const t = window.setTimeout(() => setRobotFailed(true), 12000);
-    return () => window.clearTimeout(t);
-  }, [hasWebGL, modelReady, robotFailed]);
+  // No load-timeout watchdog here on purpose. A timer cannot tell "slow" from
+  // "broken": on a slow connection the 4.4 MB GLB plus Draco decode can easily
+  // outrun any fixed deadline, and tripping it swapped the working robot for the
+  // static poster permanently, with no recovery once the model finished. The
+  // fallback is now driven only by real signals: no WebGL context, or an actual
+  // error caught by StageErrorBoundary. Until then the poster covers the stage.
 
   // Static view when WebGL is unavailable OR the interactive robot failed to load.
   // Either way we keep the poster + body-mapped cards so the concept survives.

@@ -26,13 +26,13 @@ export const recordSections: RecordSectionData[] = [
         heading: 'Internships',
         entries: [
           {
-            role: 'AI Intern',
+            role: 'AI Software Engineering Intern',
             org: 'Software Associates',
-            meta: 'May 2026 · present · North Potomac, MD',
+            meta: 'May 2026 · August 2026 · Remote',
             lines: [
-              'AI-powered algorithmic trading bot in Python. Multi-indicator signal engine (RSI, MACD, Bollinger Bands, SMA/EMA, ATR) generating weighted BUY/SELL/HOLD signals with confidence scoring.',
-              'Interactive Brokers Client Portal REST API for live market data, historical bars, and automated order execution with session keepalive. ATR-based dynamic position sizing; automated stop-loss, take-profit, and trailing stop; per-trade portfolio exposure capped at 1%.',
-              'Real-time Flask + JavaScript dashboard: auto-refreshing signal cards, live P&L, open positions, full trade history. Modular 6-file architecture across signals, risk, and broker connectivity.',
+              'Built a local-first voice assistant on embedded Linux and Apple Silicon: Whisper STT, LLM routing through Ollama with cloud fallback, Coqui TTS, a FastAPI service layer, and an Electron client. Ran MLX LoRA fine-tuning to adapt the local model’s response behavior.',
+              'Diagnosed and fixed audio-pipeline timing failures, device interface faults, and I2C/UART peripheral errors that were dropping utterances mid-stream, taking capture from intermittent to reliable end to end.',
+              'Shipped a Python and Flask trading service on the Interactive Brokers REST API: a five-indicator weighted signal engine (RSI, MACD, Bollinger Bands, moving averages, ATR), automated stop-loss, take-profit and trailing-stop risk logic, and a live position and P&L dashboard.',
             ],
           },
           {
@@ -57,9 +57,9 @@ export const recordSections: RecordSectionData[] = [
           {
             role: 'ECE 385 (FPGA Design) Course Assistant',
             org: 'University of Illinois at Urbana-Champaign',
-            meta: 'August 2025 · present',
+            meta: 'January 2026 · present',
             lines: [
-              'Supported 100+ students in SystemVerilog FPGA labs: FSMs, datapaths, memory systems, VGA output, simulation, synthesis, testbench verification, hardware debugging. Root-caused failures in timing, reset logic, module interfaces, and deployment.',
+              'Leads lab sections for 60+ students on SystemVerilog, FPGA timing closure, and hardware-software co-design. Debugs student implementations across RTL logic, timing constraints, and board-level signal integrity.',
             ],
           },
           {
@@ -128,9 +128,9 @@ export const recordSections: RecordSectionData[] = [
           {
             role: 'BS Computer Engineering, Minor in Mathematics',
             org: 'University of Illinois at Urbana-Champaign',
-            meta: 'expected May 2027',
+            meta: 'August 2023 · expected May 2027',
             lines: [
-              'Coursework: ECE 470 Robotics · ECE 489 Robot Dynamics & Control · ECE 486 Control Systems · ECE 391 Operating Systems · ECE 385 FPGA Design · ECE 210 Analog Signal Processing · CS 225 Data Structures · MATH 257 Linear Algebra.',
+              'Coursework: ECE 470 Robotics · ECE 486 Control Systems · ECE 484 Principles of Safe Autonomy · ECE 391 Operating Systems · ECE 494 Deep Learning for Computer Vision.',
             ],
           },
         ],
