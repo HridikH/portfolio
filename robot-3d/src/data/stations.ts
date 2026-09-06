@@ -157,17 +157,19 @@ export const stations: Station[] = [
   },
   {
     id: 'pendulum',
-    metric: '3 s settling time',
+    // Settling time deliberately omitted: three conflicting figures exist (3 s here
+    // previously, 1.1 s on the Zipline resume, ~0.9 s predicted by the design poles).
+    // Restore only the value that can be backed by a plot.
     no: 'PRJ-07',
     region: 'legs',
     hud: 'LEGS / VEST',
     anatomy: 'Vestibular balance',
-    title: 'LQR Inverted Pendulum',
+    title: 'Inverted Pendulum, Pole Placement and Observer',
     phase: 'completed',
     featuredRank: 4,
     blurb:
-      'An inverted pendulum held upright by full-state LQR. Simulated in MATLAB, then made to stand up in hardware.',
-    tags: ['MATLAB', 'Control Theory', 'Embedded'],
+      'Pole-placement state feedback with a Luenberger observer, built as two decoupled 2-state blocks and gain-scheduled across the upright and hanging linearizations. Friction parameters identified from logged step-response data.',
+    tags: ['MATLAB', 'State Estimation', 'System ID', 'Embedded'],
     // TODO(hridik): add the correct public repo URL if one exists.
     link: undefined,
     media: { type: 'video', src: `${BASE}media/pendulum.mp4`, poster: `${BASE}media/pendulum-poster.jpg` },
