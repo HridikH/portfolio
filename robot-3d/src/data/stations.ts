@@ -157,9 +157,9 @@ export const stations: Station[] = [
   },
   {
     id: 'pendulum',
-    // Settling time deliberately omitted: three conflicting figures exist (3 s here
-    // previously, 1.1 s on the Zipline resume, ~0.9 s predicted by the design poles).
-    // Restore only the value that can be backed by a plot.
+    // 1.1 s is the measured figure (confirmed by Hridik, backed by a plot). The old
+    // 3 s claim and the ~0.9 s design-pole prediction are both retired; use 1.1 s only.
+    metric: '1.1 s settling time',
     no: 'PRJ-07',
     region: 'legs',
     hud: 'LEGS / VEST',
