@@ -105,8 +105,38 @@ export const stations: Station[] = [
     bodyY: 0.42,
   },
   {
-    id: 'flexhand',
+    id: 'autonomy',
     no: 'PRJ-04',
+    region: 'brain',
+    hud: 'BRAIN / AUTONOMY',
+    anatomy: 'Decision and planning',
+    title: 'Autonomous Vehicle Perception and Control',
+    phase: 'in-progress',
+    featuredRank: 2,
+    blurb:
+      'Perception, LiDAR sensing, reinforcement learning, and vehicle control for a self-driving stack, targeting a Polaris GEM electric vehicle platform.',
+    tags: ['Python', 'LiDAR', 'Perception', 'RL', 'Controls'],
+    side: 'left',
+    bodyY: 0.06,
+  },
+  {
+    id: 'humanoidrl',
+    no: 'PRJ-05',
+    region: 'core',
+    hud: 'CORE / POLICY',
+    anatomy: 'Learned balance',
+    title: 'Humanoid RL Policies in Simulation',
+    phase: 'in-progress',
+    featuredRank: 3,
+    blurb:
+      'Reinforcement learning policies for a simulated humanoid covering locomotion, balance, and manipulation. Trained in Isaac Gym and MuJoCo on CUDA, with viser for visualization.',
+    tags: ['Python', 'Isaac Gym', 'MuJoCo', 'CUDA', 'RL'],
+    side: 'right',
+    bodyY: 0.6,
+  },
+  {
+    id: 'flexhand',
+    no: 'PRJ-06',
     region: 'arms',
     hud: 'HANDS / TELEOP',
     anatomy: 'Teleoperated grasp',
@@ -124,7 +154,7 @@ export const stations: Station[] = [
   {
     id: 'grogu',
     metric: '22 DOF',
-    no: 'PRJ-05',
+    no: 'PRJ-07',
     region: 'face',
     hud: 'FACE / EXPR',
     anatomy: 'Facial actuation',
@@ -140,7 +170,7 @@ export const stations: Station[] = [
   {
     id: 'jupiter',
     metric: '0.3 to 0.6 s first token, warm',
-    no: 'PRJ-06',
+    no: 'PRJ-08',
     region: 'jaw',
     hud: 'VOCAL / LANG',
     anatomy: 'Language center',
@@ -160,7 +190,7 @@ export const stations: Station[] = [
     // 1.1 s is the measured figure (confirmed by Hridik, backed by a plot). The old
     // 3 s claim and the ~0.9 s design-pole prediction are both retired; use 1.1 s only.
     metric: '1.1 s settling time',
-    no: 'PRJ-07',
+    no: 'PRJ-09',
     region: 'legs',
     hud: 'LEGS / VEST',
     anatomy: 'Vestibular balance',
@@ -179,7 +209,7 @@ export const stations: Station[] = [
   {
     id: 'cartpole',
     metric: '1 kHz RK4 · scratch LQR',
-    no: 'PRJ-08',
+    no: 'PRJ-10',
     region: 'legs',
     hud: 'SIM / CTRL',
     anatomy: 'Motor control',
@@ -196,7 +226,7 @@ export const stations: Station[] = [
   {
     id: 'motionplanning',
     metric: 'A* 6 to 11% shorter · under 20 ms',
-    no: 'PRJ-09',
+    no: 'PRJ-11',
     region: 'legs',
     hud: 'PLAN / NAV',
     anatomy: 'Path planning',

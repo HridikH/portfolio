@@ -280,7 +280,7 @@ export default function App() {
             <h1>Hridik Hingorani</h1>
             <p className="hero-role">Robotics, controls, embedded systems.</p>
             <p className="hero-sub">
-              Nine projects, mapped head to toe on the robot. Scroll to run the check.
+              Eleven projects, mapped head to toe on the robot. Scroll to run the check.
             </p>
             <p className="hero-note">
               {staticView
