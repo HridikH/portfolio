@@ -125,12 +125,12 @@ export const stations: Station[] = [
     region: 'core',
     hud: 'CORE / POLICY',
     anatomy: 'Learned balance',
-    title: 'Humanoid RL Policies in Simulation',
+    title: 'Humanoid Push Recovery',
     phase: 'in-progress',
     featuredRank: 3,
     blurb:
-      'Reinforcement learning policies for a simulated humanoid covering locomotion, balance, and manipulation. Trained in Isaac Gym and MuJoCo on CUDA, with viser for visualization.',
-    tags: ['Python', 'Isaac Gym', 'MuJoCo', 'CUDA', 'RL'],
+      'Reward-based reinforcement learning policy that recovers from pushes in any direction. Trained in Isaac Gym and MuJoCo on CUDA, with viser for visualization. Hardware deployment on a Booster K1 humanoid targeted for December 2026.',
+    tags: ['Python', 'Isaac Gym', 'MuJoCo', 'CUDA', 'RL', 'Booster K1'],
     side: 'right',
     bodyY: 0.6,
   },
@@ -264,6 +264,6 @@ export const offClock = {
 export const contact = {
   label: 'End of diagnostic',
   title: 'Building future readiness today.',
-  body: 'Open to a Fall 2026 co-op or internship in robotics and controls. Champaign, IL.',
-  status: 'open to Fall 2026 co-op / internship (robotics & controls)',
+  body: 'Open to full-time roles in robotics and controls starting summer 2027. Champaign, IL.',
+  status: 'open to full-time roles from summer 2027 (robotics & controls)',
 };
