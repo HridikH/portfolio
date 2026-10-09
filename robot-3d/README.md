@@ -10,8 +10,8 @@ npm install
 npm run dev
 ```
 
-- `/portfolio/` — the site
-- `/portfolio/viewer.html` — model-only realism check (orbit, palette toggle,
+- `/` — the site
+- `/viewer.html` — model-only realism check (orbit, palette toggle,
   region cycle; also `?palette=dark`, `?region=arms`, `?mat=normal|basic|standard`
   for debugging)
 
@@ -22,7 +22,7 @@ npm run deploy
 ```
 
 Builds and pushes `dist/` to the repo's `gh-pages` branch, base path
-`/portfolio/`. Warning: this replaces whatever the `gh-pages` branch is
+`/`. Warning: this replaces whatever the `gh-pages` branch is
 currently serving (the scroll-cinema build, if that's live).
 
 ## The model
