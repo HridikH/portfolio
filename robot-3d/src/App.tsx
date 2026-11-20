@@ -136,6 +136,16 @@ function StationCard({ s, active }: { s: Station; active: boolean }) {
           aria-label={`${s.title} demonstration`}
         />
       )}
+      {s.gallery && (
+        <div className="card-gallery">
+          {s.gallery.map((g) => (
+            <figure key={g.src}>
+              <video src={g.src} poster={g.poster} muted loop playsInline autoPlay={active} aria-label={g.caption} />
+              <figcaption>{g.caption}</figcaption>
+            </figure>
+          ))}
+        </div>
+      )}
       {s.media?.type === 'image' && (
         <img src={s.media.src} alt={`${s.title} preview`} loading="lazy" />
       )}

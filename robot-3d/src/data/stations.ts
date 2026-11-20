@@ -37,6 +37,7 @@ export type Station = {
   progress?: string; // what is done so far, in place of a quantified result
   metric?: string; // one quantified result, rendered as a stat line
   media?: { type: 'video' | 'image'; src: string; poster?: string };
+  gallery?: { src: string; poster?: string; caption: string }[]; // side-by-side video strip
   side: 'left' | 'right';
   bodyY: number;
 };
@@ -142,6 +143,10 @@ export const stations: Station[] = [
       'Baseline walking policy running on the physical K1. Push-trained and domain-randomized policies trained and benchmarked in sim; push-trained cut falls from 39% to 13% at push strengths it never saw in training. Next: hardware stick-push benchmark of all three policies (4 directions × 3 push levels) in early December.',
     tags: ['Python', 'PPO', 'mjlab', 'MuJoCo', 'Domain Randomization', 'Slurm', 'Booster K1'],
     link: 'https://github.com/HridikH/k1-push-recovery',
+    gallery: [
+      { src: `${BASE}media/k1-sim-push.mp4`, poster: `${BASE}media/k1-sim-push-poster.jpg`, caption: 'Domain-randomized policy taking pushes in sim' },
+      { src: `${BASE}media/k1-robot.mp4`, poster: `${BASE}media/k1-robot-poster.jpg`, caption: 'Walking policy on the physical K1' },
+    ],
     side: 'right',
     bodyY: 0.6,
   },
