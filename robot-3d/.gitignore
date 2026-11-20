@@ -1,3 +1,7 @@
 node_modules
 dist
 *.local
+resume/*.aux
+resume/*.log
+resume/*.out
+resume/*.pdf

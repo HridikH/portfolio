@@ -110,12 +110,17 @@ export const stations: Station[] = [
     region: 'brain',
     hud: 'BRAIN / AUTONOMY',
     anatomy: 'Decision and planning',
-    title: 'Autonomous Vehicle Perception and Control',
+    title: 'Self-Driving Stack, Polaris GEM ev4',
     phase: 'in-progress',
     featuredRank: 2,
     blurb:
-      'Perception, LiDAR sensing, reinforcement learning, and vehicle control for a self-driving stack, targeting a Polaris GEM electric vehicle platform.',
-    tags: ['Python', 'LiDAR', 'Perception', 'RL', 'Controls'],
+      'A ROS 2 autonomy stack that drives a full-scale Polaris GEM ev4 electric vehicle: follow the lane along a recorded route, stop for stop signs, pedestrians and obstacles, resume once clear, and park within 2 m of the goal. Owns dynamics, controls and testing on a four-person team. Wrote the control layer: Pure Pursuit with speed-scaled lookahead (Stanley as a comparison), a curvature-based corner-speed planner with braking-distance deceleration into every stop, a speed PID on throttle and brake, and a command limiter that clamps steering angle, steering rate and acceleration before anything reaches the PACMod drive-by-wire. Around it: a bird’s-eye lane fit as the primary steering reference with GNSS/INS waypoints as fallback, YOLO11n stop-sign and pedestrian detection, LiDAR corridor obstacle detection (ground-plane removal, Euclidean clustering), and a DRIVE / STOP-SIGN HOLD / OBSTACLE HOLD / GOAL state machine. Built the test loop: a custom track simulator and a Gazebo world of the track, both generated from ROS bags and the RTK route recorded on the car.',
+    progress:
+      'Running on the vehicle: holds the lane on straights and through turns from the front camera. Car calibrated from recorded bags (camera tilt, sensor offsets, wheelbase, lane width); full laps in the track simulator. Next: live sign, pedestrian and obstacle stops, then start-to-goal runs for the December 11 final demo.',
+    tags: ['Python', 'ROS 2', 'Pure Pursuit', 'PID', 'YOLO11n', 'LiDAR', 'Gazebo'],
+    // Code repo is private to the course org; the public project site has the write-up and videos.
+    link: 'https://safeautonomy-illinois-students.github.io/fa26_ece484_final_project_site_team_GEMstones/',
+    media: { type: 'video', src: `${BASE}media/gem-ev4.mp4`, poster: `${BASE}media/gem-ev4-poster.jpg` },
     side: 'left',
     bodyY: 0.06,
   },
@@ -125,12 +130,18 @@ export const stations: Station[] = [
     region: 'core',
     hud: 'CORE / POLICY',
     anatomy: 'Learned balance',
-    title: 'Humanoid Push Recovery',
+    title: 'Humanoid Push Recovery, Booster K1',
+    // Measured: 256-robot sim fall test, one trunk push each, falls counted for 2 s.
+    // Baseline (HW3) 39% vs push-trained stage1 13% at 15–40 N·s, a level stage1 never trained on.
+    metric: 'Falls at 15–40 N·s: 39% → 13%',
     phase: 'in-progress',
     featuredRank: 3,
     blurb:
-      'Reward-based reinforcement learning policy that recovers from pushes in any direction. Trained in Isaac Gym and MuJoCo on CUDA, with viser for visualization. Hardware deployment on a Booster K1 humanoid targeted for December 2026.',
-    tags: ['Python', 'Isaac Gym', 'MuJoCo', 'CUDA', 'RL', 'Booster K1'],
+      'A PPO walking policy for the 19.7 kg Booster K1 humanoid that recovers from stick-style shoves to the torso, trained in mjlab on 4,096 parallel simulated robots on NCSA Delta GPUs. Modeled each push as a force impulse on the trunk with random direction, ±20° tilt and contact point, and found that impulse (N·s), not peak force, decides whether the robot falls, so the curriculum ramps impulse directly. Made that curriculum resume-safe across Delta’s 4-hour job restarts. When fixed stages past 10–30 N·s made the policy worse at every level, diagnosed it from the training curves (unsurvivable pushes drowning the learning signal) and replaced it with a survival-gated 13-level ladder that only gets harder once 85% of pushes are survived. Added a domain-randomization task (foot friction, PD gains, CoM shift, payload, torque limits, 10–50 ms command latency) for sim-to-real. Every task is verified against the baseline by a config-diff check before it trains, and a fall-rate benchmark scores each checkpoint by push strength and direction.',
+    progress:
+      'Baseline walking policy running on the physical K1. Push-trained and domain-randomized policies trained and benchmarked in sim; push-trained cut falls from 39% to 13% at push strengths it never saw in training. Next: hardware stick-push benchmark of all three policies (4 directions × 3 push levels) in early December.',
+    tags: ['Python', 'PPO', 'mjlab', 'MuJoCo', 'Domain Randomization', 'Slurm', 'Booster K1'],
+    link: 'https://github.com/HridikH/k1-push-recovery',
     side: 'right',
     bodyY: 0.6,
   },
