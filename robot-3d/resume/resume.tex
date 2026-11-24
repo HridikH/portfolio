@@ -1,7 +1,7 @@
 %-------------------------------------------------------------------------------
 % Hridik Hingorani: one-page resume (hosted as public/media/Hridik_Hingorani_Resume.pdf)
-% Layout follows Jake Gutierrez's resume template (MIT). Rebuilt Nov 2026 from the
-% hosted PDF so the source lives in the repo.
+% Layout follows Jake Gutierrez's resume template (MIT), with navy section headings and
+% underlined contact links. Recreated Nov 2026 from Hridik_Hingorani_Resume-4.pdf.
 % Build: pdflatex resume.tex
 %-------------------------------------------------------------------------------
 \documentclass[letterpaper,11pt]{article}
@@ -9,7 +9,7 @@
 \usepackage{latexsym}
 \usepackage[empty]{fullpage}
 \usepackage{titlesec}
-\usepackage[usenames,dvipsnames]{color}
+\usepackage[usenames,dvipsnames]{xcolor}
 \usepackage{enumitem}
 \usepackage[hidelinks]{hyperref}
 \usepackage{fancyhdr}
@@ -20,64 +20,68 @@
 \usepackage{lmodern}
 \input{glyphtounicode}
 
+\definecolor{heading}{HTML}{1F3A68}
+
 \pagestyle{fancy}
 \fancyhf{}
 \fancyfoot{}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
 
-\addtolength{\oddsidemargin}{-0.55in}
-\addtolength{\evensidemargin}{-0.55in}
-\addtolength{\textwidth}{1.1in}
-\addtolength{\topmargin}{-0.6in}
-\addtolength{\textheight}{1.2in}
+\addtolength{\oddsidemargin}{-0.6in}
+\addtolength{\evensidemargin}{-0.6in}
+\addtolength{\textwidth}{1.2in}
+\addtolength{\topmargin}{-0.7in}
+\addtolength{\textheight}{1.4in}
 
 \urlstyle{same}
 \raggedbottom
 \raggedright
 \setlength{\tabcolsep}{0in}
 
-\titleformat{\section}{\vspace{-5pt}\scshape\raggedright\large}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+\titleformat{\section}{\vspace{-6pt}\color{heading}\bfseries\raggedright\large}{}{0em}{}[\color{heading}\titlerule\vspace{-5pt}]
+\titlespacing*{\section}{0pt}{10pt}{9pt}
 \pdfgentounicode=1
 
-\newcommand{\resumeItem}[1]{\item\small{#1 \vspace{-2pt}}}
+\newcommand{\ulink}[2]{\href{#1}{\underline{#2}}}
+\newcommand{\resumeItem}[1]{\item{\fontsize{9.5pt}{11.2pt}\selectfont #1\par}\vspace{-1pt}}
 \newcommand{\resumeSubheading}[4]{
   \vspace{-2pt}\item
-    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
-      \textbf{#1} & #2 \\
+    \begin{tabular*}{\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & \textbf{#2} \\
       \textit{\small#3} & \textit{\small #4} \\
     \end{tabular*}\vspace{-7pt}
 }
 \newcommand{\resumeProjectHeading}[2]{
-    \item
-    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
-      \small#1 & #2 \\
+    \vspace{-1pt}\item
+    \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & \textbf{\small #2} \\
     \end{tabular*}\vspace{-7pt}
 }
-\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
-\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in, label={}]}
 \newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
-\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=0.32in, label=\textbullet, itemsep=0pt, topsep=2pt]}
 \newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
 
 \begin{document}
 
 \begin{center}
-    \textbf{\Huge \scshape Hridik Hingorani} \\ \vspace{1pt}
-    \small (447) 902-5994 $|$ \href{mailto:hridikh2@illinois.edu}{hridikh2@illinois.edu} $|$
-    \href{https://linkedin.com/in/HridikH}{linkedin.com/in/HridikH} $|$
-    \href{https://github.com/HridikH}{github.com/HridikH} $|$
-    \href{https://hridikhingorani.com}{hridikhingorani.com}
+    {\Huge \scshape Hridik Hingorani} \\ \vspace{3pt}
+    \small (447) 902-5994 \enspace$|$\enspace \ulink{mailto:hridikh2@illinois.edu}{hridikh2@illinois.edu} \enspace$|$\enspace
+    \ulink{https://linkedin.com/in/HridikH}{linkedin.com/in/HridikH} \enspace$|$\enspace
+    \ulink{https://github.com/HridikH}{github.com/HridikH} \enspace$|$\enspace
+    \ulink{https://hridikhingorani.com}{hridikhingorani.com}
 \end{center}
+\vspace{-12pt}
 
 %-----------EDUCATION-----------
 \section{Education}
   \resumeSubHeadingListStart
     \resumeSubheading
-      {University of Illinois Urbana-Champaign}{Urbana, IL}
-      {B.S. Computer Engineering, Minor: Mathematics}{Aug. 2023 -- May 2027}
+      {University of Illinois Urbana-Champaign}{Expected May 2027}
+      {B.S. in Computer Engineering, Minor in Mathematics}{Urbana, IL}
       \resumeItemListStart
-        \resumeItem{\textbf{Coursework:} Robotics (ECE 470), Control Systems (ECE 486), Principles of Safe Autonomy (ECE 484), Operating Systems (ECE 391), Deep Learning for Computer Vision (ECE 494)}
+        \resumeItem{\textbf{Coursework:} Control Systems, Robot Dynamics and Control, Introduction to Robotics, Principles of Safe Autonomy, Operating Systems, Deep Learning for Computer Vision, Digital Systems Lab}
       \resumeItemListEnd
   \resumeSubHeadingListEnd
 
@@ -85,62 +89,74 @@
 \section{Experience}
   \resumeSubHeadingListStart
     \resumeSubheading
-      {Software Associates}{Remote}
-      {AI Software Engineering Intern}{May 2026 -- Aug. 2026}
+      {Software Associates}{May 2026 -- Aug. 2026}
+      {AI Software Engineering Intern}{Remote}
       \resumeItemListStart
-        \resumeItem{Built a local-first voice assistant on embedded Linux and Apple Silicon: Whisper STT, LLM routing through Ollama with cloud fallback, Coqui TTS, a FastAPI service layer, and an Electron client, with MLX LoRA fine-tuning.}
-        \resumeItem{Diagnosed and fixed audio-pipeline timing failures, device interface faults, and I2C/UART peripheral errors that were dropping utterances mid-stream, taking capture from intermittent to reliable end-to-end.}
-        \resumeItem{Shipped a Python/Flask trading service on the Interactive Brokers REST API: five-indicator signal engine (RSI, MACD, Bollinger Bands, moving averages, ATR), stop-loss/take-profit/trailing-stop logic, and a live P\&L dashboard.}
+        \resumeItem{Built an algorithmic trading system in Python from scratch, combining five technical indicators (RSI, MACD, Bollinger Bands, moving averages, ATR) into a weighted signal engine that issued automated buy, sell, and hold decisions}
+        \resumeItem{Integrated the Interactive Brokers API for live market data and order execution with automated stop-loss, take-profit, and trailing-stop logic, and shipped a Flask dashboard streaming live signals, open positions, and P\&L}
       \resumeItemListEnd
     \resumeSubheading
-      {University of Illinois -- ECE Department}{Urbana, IL}
-      {Course Assistant, ECE 385 (FPGA Design)}{Jan. 2026 -- Present}
+      {University of Illinois Urbana-Champaign}{Jan. 2026 -- Present}
+      {Course Assistant, ECE 385: Digital Systems Laboratory}{Urbana, IL}
       \resumeItemListStart
-        \resumeItem{Lead lab sections for 60+ students on SystemVerilog, FPGA timing closure, and hardware-software co-design; debug student implementations across RTL logic, timing constraints, and board-level signal integrity.}
+        \resumeItem{Lead lab sections for 60+ students on SystemVerilog, FPGA timing closure, and hardware-software co-design}
+        \resumeItem{Debug failures across the stack, from simulation waveforms to on-board behavior, isolating whether a fault lives in the RTL, the constraints, or the hardware}
+      \resumeItemListEnd
+    \resumeSubheading
+      {HealthArk Insights}{May 2025 -- Aug. 2025}
+      {AI Software Development Intern}{Mumbai, India}
+      \resumeItemListStart
+        \resumeItem{Shipped three production Python features to a client-facing document platform (summarization, web scraping, dynamic formatting), holding 92\% extraction accuracy across the document simplification pipeline}
+        \resumeItem{Gathered and validated requirements directly with clients, taking each feature from specification through production release}
       \resumeItemListEnd
   \resumeSubHeadingListEnd
 
 %-----------PROJECTS-----------
 \section{Projects}
-    \resumeSubHeadingListStart
-      \resumeProjectHeading
-          {\textbf{\href{https://safeautonomy-illinois-students.github.io/fa26_ece484_final_project_site_team_GEMstones/}{Self-Driving Stack -- Polaris GEM ev4}} $|$ \emph{Python, ROS 2, YOLO11n, LiDAR}}{Fall 2026}
-          \resumeItemListStart
-            \resumeItem{Owned dynamics, controls, and testing on a 4-person team building a ROS 2 autonomy stack for a full-scale EV: lane following, full stops for stop signs, pedestrians, and obstacles, auto-resume, and a stop within 2 m of the goal.}
-            \resumeItem{Wrote the control layer: Pure Pursuit (Stanley as comparison), curvature-based speed planning with braking-distance deceleration, speed PID, and steering/acceleration limits ahead of PACMod drive-by-wire; built a track simulator and Gazebo world from ROS bags. Holds the lane through turns on the car.}
-          \resumeItemListEnd
-      \resumeProjectHeading
-          {\textbf{\href{https://github.com/HridikH/k1-push-recovery}{Humanoid Push Recovery -- Booster K1}} $|$ \emph{Python, PPO, mjlab, MuJoCo}}{Fall 2026}
-          \resumeItemListStart
-            \resumeItem{Trained a PPO walking policy for the 19.7 kg K1 humanoid that recovers from torso shoves, on 4,096 parallel sim robots on NCSA Delta; modeled pushes as trunk impulses, ramping impulse (N$\cdot$s), not force.}
-            \resumeItem{Replaced a degrading curriculum with a survival-gated 13-level push ladder plus domain randomization (friction, gains, CoM, payload, latency); \textbf{cut falls from 39\% to 13\%} at unseen 15--40 N$\cdot$s; deployed sim-to-real on the K1.}
-          \resumeItemListEnd
-      \resumeProjectHeading
-          {\textbf{Real-Time Task-Space Impedance Control -- CRS Arm} $|$ \emph{C, TMS320F28335 DSP}}{Spring 2026}
-          \resumeItemListStart
-            \resumeItem{Implemented a \textbf{1 kHz} task-space impedance controller in C commanding joint torques on a 3-joint arm: PD law through $\tau = J^T F$, per-waypoint stiffness, Coulomb/viscous friction compensation, $\pm$5 N$\cdot$m saturation.}
-            \resumeItem{Applied open-loop feedforward normal force via estimated contact stiffness with no force sensor, verified on a scale; debugged saturation, loop-timing violations, and near-singular configurations on an oscilloscope.}
-          \resumeItemListEnd
-      \resumeProjectHeading
-          {\textbf{RISC-V Preemptive Multitasking OS Kernel} $|$ \emph{C, RISC-V Assembly}}{Spring 2026}
-          \resumeItemListStart
-            \resumeItem{Built a $\sim$6,000-line kernel from scratch: preemptive scheduler, Sv39 virtual memory, VirtIO driver, FAT filesystem, fork/exec, pipes, and a shell; traced a PTE truncation bug through GDB and QEMU.}
-          \resumeItemListEnd
-      \resumeProjectHeading
-          {\textbf{\href{https://github.com/HridikH/ur3-image-drawing}{UR3 Vision-Guided Contour Drawing}} $|$ \emph{Python, ROS, OpenCV}}{Spring 2026}
-          \resumeItemListStart
-            \resumeItem{Derived closed-form analytic IK for a 6-DOF UR3 with product-of-exponentials FK and a Canny/contour vision front end; commanded joint targets over ROS to 0.0005 rad and drew a 142-stroke image in 7 minutes on hardware.}
-          \resumeItemListEnd
-    \resumeSubHeadingListEnd
+  \resumeSubHeadingListStart
+    \resumeProjectHeading
+      {\textbf{Humanoid Push Recovery, Booster K1} $|$ \emph{Python, PPO, mjlab, MuJoCo, Slurm}}{Fall 2026}
+      \resumeItemListStart
+        \resumeItem{Deployed the policy sim-to-real on K1 hardware at 50 Hz: zero falls across 4 gantry runs and about 18 hand pushes, peak tilt 32 degrees against a fall threshold of about 60 degrees, with the K1's built-in fall safeguard never engaging}
+        \resumeItem{Cut falls from 39\% to 13\% on unseen 15--40 N$\cdot$s pushes by replacing a failing curriculum with a survival-gated 13-level push ladder and domain randomization}
+        \resumeItem{Trained a PPO walking policy for a 19.7 kg humanoid across 4,096 parallel simulations on NCSA Delta, modeling pushes as ramping torso impulses}
+      \resumeItemListEnd
+    \resumeProjectHeading
+      {\textbf{Self-Driving Stack, Polaris GEM e4} $|$ \emph{C++, Python, ROS 2, Gazebo}}{Fall 2026}
+      \resumeItemListStart
+        \resumeItem{Owned dynamics, controls, and testing on a four-person team building a ROS 2 autonomy stack for a full-scale EV: lane following, stops for signs, pedestrians, and obstacles, and auto-resume}
+        \resumeItem{Wrote the control layer: Pure Pursuit with a Stanley baseline, curvature-based speed planning, a speed PID, and actuator limits, stopping within 2 m of the goal}
+        \resumeItem{Built a track simulator and Gazebo world from recorded ROS bags for controller testing}
+      \resumeItemListEnd
+    \resumeProjectHeading
+      {\textbf{Real-Time Task-Space Impedance Control, CRS Arm} $|$ \emph{C, TI C2000 (TMS320F28335)}}{Spring 2026}
+      \resumeItemListStart
+        \resumeItem{Implemented a 1 kHz task-space impedance controller in bare-metal C, reading joint encoders and sending joint torque commands directly to the motor amplifiers of a 3-joint arm}
+        \resumeItem{Added per-joint Coulomb and viscous friction compensation, per-waypoint stiffness modes for selective compliance, and torque saturation; validated on peg-in-hole insertion}
+        \resumeItem{Commanded contact force open-loop from estimated contact stiffness with no force sensor, and verified it on a scale}
+      \resumeItemListEnd
+    \resumeProjectHeading
+      {\textbf{RISC-V Preemptive Multitasking OS Kernel} $|$ \emph{C, RISC-V Assembly, QEMU, GDB}}{Spring 2026}
+      \resumeItemListStart
+        \resumeItem{Root-caused a page-table entry bug in a $\sim$6,000-line kernel by stepping the fault path in GDB against QEMU and inspecting translations by hand}
+        \resumeItem{Wrote the preemptive scheduler, Sv39 virtual memory, VirtIO block, UART, and RTC drivers, a FAT filesystem, and fork, exec, and pipes behind a shell}
+      \resumeItemListEnd
+    \resumeProjectHeading
+      {\textbf{UR3 Vision-Guided Contour Drawing} $|$ \emph{Python, ROS, OpenCV}}{Spring 2026}
+      \resumeItemListStart
+        \resumeItem{Derived closed-form inverse kinematics for the 6-DOF UR3 with product-of-exponentials forward kinematics, feeding a Canny and contour pipeline that turns images into stroke paths}
+        \resumeItem{Hit joint targets within 0.0005 rad over ROS and drew a 142-stroke image on hardware in 7 minutes}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
 
 %-----------SKILLS-----------
 \section{Technical Skills}
- \begin{itemize}[leftmargin=0.15in, label={}]
-    \small{\item{
-     \textbf{Robotics \& Controls}{: analytic IK, PoE kinematics, impedance control, LQR, PID, Pure Pursuit/Stanley, A*/RRT*, ROS 2, Gazebo} \\
-     \textbf{Learning \& Autonomy}{: PPO, domain randomization, mjlab/MuJoCo, YOLO, LiDAR clustering, Slurm} \\
-     \textbf{Languages}{: C/C++, Python, SystemVerilog, RISC-V Assembly, MATLAB, Rust (application-level)} \\
-     \textbf{Embedded \& Hardware}{: real-time Linux, bare-metal firmware, I2C/UART/SPI/ADC/PWM, ESP32, Raspberry Pi, FPGA, KiCad, Git}
+ \begin{itemize}[leftmargin=0in, label={}]
+    \fontsize{9.5pt}{11.6pt}\selectfont{\item{
+     \textbf{Languages}{: C, C++, Python, MATLAB, SystemVerilog, RISC-V Assembly} \\
+     \textbf{Controls}{: PID, impedance control, LQR, pole placement and observers, Pure Pursuit/Stanley, analytic IK, PoE kinematics} \\
+     \textbf{Learning \& Simulation}{: PPO, domain randomization, mjlab, MuJoCo, Gazebo, Slurm} \\
+     \textbf{Embedded \& Tools}{: TI C2000, ESP32, bare-metal firmware, I2C, UART, ADC, PWM, ROS 2, Linux, Git, GDB, QEMU, KiCad}
     }}
  \end{itemize}
 
