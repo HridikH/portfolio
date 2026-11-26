@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>K1 Push Recovery: Hridik Hingorani</title>
+  <meta name="description" content="Learning robust humanoid locomotion: PPO push recovery on the Booster K1, a survival-gated push curriculum, domain randomization, and sim-to-real deployment on hardware." />
+  <link rel="stylesheet" href="/src/pages/case.css" />
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="name" href="/">HRIDIK HINGORANI</a>
+    <nav aria-label="Site">
+      <a href="/k1.html" aria-current="page">K1 case study</a>
+      <a href="/projects.html">Engineering notes</a>
+      <a href="/media/Hridik_Hingorani_Resume.pdf">Resume</a>
+      <a href="https://github.com/HridikH">GitHub</a>
+      <a href="mailto:hridikh2@illinois.edu">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <p class="kicker">Case study · CS 498 final project · Sep to Nov 2026</p>
+  <h1>Learning Robust Humanoid Locomotion: Sim-to-Real Push Recovery on Booster K1</h1>
+  <p class="lede">
+    A PPO walking policy for the 19.7 kg Booster K1, fine-tuned to recover from shoves to the trunk with a
+    push curriculum and domain randomization in mjlab (MuJoCo), trained on NCSA Delta GPUs, and run on the
+    physical robot.
+  </p>
+
+  <section class="summary" aria-label="Summary">
+    <figure>
+      <video src="/media/k1-hw-dr.mp4" poster="/media/k1-hw-dr-poster.jpg" controls muted playsinline preload="metadata"
+             aria-label="Booster K1 running the push-plus-domain-randomization policy while a teammate pushes it by hand"></video>
+      <figcaption>Physical K1 running the push + domain-randomization policy while it is pushed by hand on a safety gantry. Original footage: <a href="https://drive.google.com/drive/folders/13ApoX8ARui_jXwjQTF56umYJQiuYH7tX">Drive folder</a>.</figcaption>
+    </figure>
+    <div>
+      <div class="stats">
+        <div class="stat">
+          <div class="k">Simulation</div>
+          <div class="v">61% → 87%</div>
+          <div class="c">recovered from one 15–40 N·s trunk push, baseline vs push-trained (stage1), 256 trials per policy. stage1 trained only up to 10–30 N·s.</div>
+        </div>
+        <div class="stat">
+          <div class="k hw">Hardware</div>
+          <div class="v">0 falls · ~18 pushes</div>
+          <div class="c">hand pushes on a safety gantry, unmeasured force. Peak trunk tilt 32° against a ~60° fall threshold. K1's own fall detector never left READY.</div>
+        </div>
+        <div class="stat">
+          <div class="k">Training</div>
+          <div class="v">~400,000 steps/s</div>
+          <div class="c">on GH200, 4,096 parallel environments; multi-GPU training jobs on NVIDIA A100, A40 and GH200 on NCSA Delta.</div>
+        </div>
+      </div>
+      <div class="links">
+        <a class="btn primary" href="https://github.com/HridikH/k1-push-recovery">Source code</a>
+        <a class="btn" href="#hardware">Hardware results</a>
+        <a class="btn" href="#results">Sim results</a>
+        <a class="btn" href="https://github.com/HridikH/k1-push-recovery/tree/main/architecture">Design docs</a>
+        <a class="btn" href="https://github.com/HridikH/k1-push-recovery/blob/main/PROGRESS.md">Experiment log</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="note">
+    <strong>Reading the numbers.</strong> The 61% → 87% figure is measured in simulation with calibrated impulses.
+    The hardware pushes were by hand and their impulse was not measured, so the hardware result shows that the policies
+    transferred and held every push on the day; it does not measure a hardware recovery rate or rank the policies.
+  </div>
+
+  <nav aria-label="Contents">
+    <ol class="toc">
+      <li><a href="#team">Team and my part</a></li>
+      <li><a href="#setup">Platform and training setup</a></li>
+      <li><a href="#rewards">Reward design</a></li>
+      <li><a href="#pushes">Disturbance model</a></li>
+      <li><a href="#dr">Domain randomization</a></li>
+      <li><a href="#results">Experiments and results</a></li>
+      <li><a href="#failure">Failure analysis and the adaptive curriculum</a></li>
+      <li><a href="#infra">Training infrastructure</a></li>
+      <li><a href="#hardware">Sim-to-real deployment</a></li>
+      <li><a href="#limits">Limitations and next steps</a></li>
+      <li><a href="#resources">Resources</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="team">Team and my part</h2>
+  <p>Three-person team: Hridik Hingorani, Stuti Bhatia, Riddhi Chauhan. Everything starts from the course's HW3 K1
+    walking task (Booster's mjlab velocity task with course-specified reward terms). The table follows the repository's
+    commit history.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Piece</th><th>Who</th><th>Where</th></tr></thead>
+    <tbody>
+      <tr class="hl"><td>Survival-gated 13-level push ladder, fall penalty, entropy override</td><td>Hridik</td><td><code>k1_push/mdp/adaptive.py</code>, <code>adaptive_cfgs.py</code></td></tr>
+      <tr class="hl"><td>Domain-randomization tasks (push + DR, push + DR + ladder)</td><td>Hridik</td><td><code>k1_push/dr_cfgs.py</code></td></tr>
+      <tr class="hl"><td>Fall-rate benchmark and test-level checkpoint staging</td><td>Hridik</td><td><code>scripts/eval_push_falls.py</code>, <code>stage_checkpoints.py</code></td></tr>
+      <tr class="hl"><td>HW3 reward terms (seven course terms, v2 revision); deployed walking checkpoint</td><td>Hridik</td><td>withheld coursework, see <a href="#rewards">below</a></td></tr>
+      <tr class="hl"><td>Hardware runs: recording, controller-takeover check, push detection and tilt analysis</td><td>Hridik, with the team on the robot</td><td>ROS 2 bags; analysis scripts in the team repository (not yet in the public copy)</td></tr>
+      <tr><td>Trunk-impulse push event and fixed-stage curriculum, baseline task, project scaffolding, hardware guide</td><td>Stuti</td><td><code>k1_push/mdp/events.py</code>, <code>curriculums.py</code>, <code>push_cfgs.py</code></td></tr>
+      <tr><td>Push-recovery reward functions (separate branch)</td><td>Riddhi</td><td><code>recovery_rewards</code> branch</td></tr>
+      <tr><td>Config-diff checks that prove each task differs from its parent only where intended</td><td>Stuti and Hridik</td><td><code>k1_push/check.py</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="setup">Platform and training setup</h2>
+  <p>The Booster K1 is a 19.7 kg humanoid with 22 actuated joints. Training uses
+    <a href="https://github.com/mujocolab/mjlab">mjlab</a> (GPU-batched MuJoCo) with rsl-rl PPO. Values below are from the
+    task configuration and are printed by <code>run.py check --dump</code>.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 960 300" role="img" aria-labelledby="dg1t dg1d" font-family="-apple-system, Helvetica, Arial, sans-serif">
+      <title id="dg1t">Training loop</title>
+      <desc id="dg1d">4,096 MuJoCo environments step on one GPU. Each step the actor reads a 75-dimensional observation and outputs 22 joint position targets, which PD controllers track at 200 Hz. Events inject trunk pushes and randomize physics. Every 24 control steps PPO updates actor and critic; the critic also sees privileged state, 90 dimensions.</desc>
+      <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#6e6e73"/></marker></defs>
+      <rect x="10" y="40" width="270" height="200" rx="12" fill="#f5f5f7" stroke="#d2d2d7"/>
+      <text x="24" y="66" font-size="14" font-weight="600" fill="#1d1d1f">mjlab · 4,096 envs on 1 GPU</text>
+      <text x="24" y="92" font-size="12" fill="#3a3a3c">MuJoCo physics, dt 5 ms</text>
+      <text x="24" y="112" font-size="12" fill="#3a3a3c">joint PD on position targets</text>
+      <rect x="24" y="128" width="242" height="46" rx="8" fill="#fff" stroke="#e3e3e8"/>
+      <text x="34" y="147" font-size="12" fill="#b5701a" font-weight="600">events</text>
+      <text x="34" y="164" font-size="11.5" fill="#3a3a3c">trunk impulses · velocity kicks · DR</text>
+      <rect x="24" y="182" width="242" height="46" rx="8" fill="#fff" stroke="#e3e3e8"/>
+      <text x="34" y="201" font-size="12" fill="#0071e3" font-weight="600">curriculum</text>
+      <text x="34" y="218" font-size="11.5" fill="#3a3a3c">push strength by stage or by survival</text>
+      <rect x="380" y="30" width="240" height="96" rx="12" fill="#fff" stroke="#0071e3"/>
+      <text x="394" y="56" font-size="14" font-weight="600" fill="#1d1d1f">Actor (policy)</text>
+      <text x="394" y="78" font-size="12" fill="#3a3a3c">MLP 512-256-128, ELU</text>
+      <text x="394" y="98" font-size="12" fill="#3a3a3c">obs 75 → 22 joint targets</text>
+      <text x="394" y="116" font-size="12" fill="#3a3a3c">Gaussian, 50 Hz</text>
+      <rect x="380" y="170" width="240" height="96" rx="12" fill="#fff" stroke="#d2d2d7"/>
+      <text x="394" y="196" font-size="14" font-weight="600" fill="#1d1d1f">Critic</text>
+      <text x="394" y="218" font-size="12" fill="#3a3a3c">MLP 512-256-128, ELU</text>
+      <text x="394" y="238" font-size="12" fill="#3a3a3c">obs 90 (adds privileged state)</text>
+      <rect x="720" y="100" width="230" height="96" rx="12" fill="#f5f5f7" stroke="#d2d2d7"/>
+      <text x="734" y="126" font-size="14" font-weight="600" fill="#1d1d1f">PPO update</text>
+      <text x="734" y="148" font-size="12" fill="#3a3a3c">every 24 steps × 4,096 envs</text>
+      <text x="734" y="168" font-size="12" fill="#3a3a3c">5 epochs × 4 minibatches</text>
+      <text x="734" y="186" font-size="12" fill="#3a3a3c">adaptive LR, KL target 0.01</text>
+      <line x1="280" y1="80" x2="376" y2="80" stroke="#6e6e73" stroke-width="1.5" marker-end="url(#ar)"/>
+      <text x="290" y="72" font-size="11" fill="#6e6e73">observation</text>
+      <line x1="376" y1="110" x2="284" y2="110" stroke="#6e6e73" stroke-width="1.5" marker-end="url(#ar)"/>
+      <text x="292" y="126" font-size="11" fill="#6e6e73">action</text>
+      <line x1="280" y1="215" x2="376" y2="215" stroke="#6e6e73" stroke-width="1.5" marker-end="url(#ar)"/>
+      <text x="288" y="207" font-size="11" fill="#6e6e73">reward, state</text>
+      <line x1="620" y1="78" x2="716" y2="130" stroke="#6e6e73" stroke-width="1.5" marker-end="url(#ar)"/>
+      <line x1="620" y1="218" x2="716" y2="170" stroke="#6e6e73" stroke-width="1.5" marker-end="url(#ar)"/>
+    </svg>
+    <figcaption>Training loop as configured in the repository. The critic's extra inputs (body linear velocity, foot height, air time, contact state and forces) exist only in simulation.</figcaption>
+  </figure>
+
+  <div class="two">
+    <div class="tw"><table>
+      <caption>Actor observation (75) and action (22)</caption>
+      <thead><tr><th>Term</th><th class="n">Dim</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Base angular velocity (IMU gyro)</td><td class="n">3</td><td>noise ±0.2</td></tr>
+        <tr><td>Projected gravity</td><td class="n">3</td><td>noise ±0.05</td></tr>
+        <tr><td>Joint position − default</td><td class="n">22</td><td>noise ±0.01, encoder bias ±0.015 rad</td></tr>
+        <tr><td>Joint velocity</td><td class="n">22</td><td>noise ±1.5</td></tr>
+        <tr><td>Previous action</td><td class="n">22</td><td></td></tr>
+        <tr><td>Velocity command (v<sub>x</sub>, v<sub>y</sub>, ω<sub>z</sub>)</td><td class="n">3</td><td></td></tr>
+        <tr><td><strong>Action:</strong> joint position offsets</td><td class="n">22</td><td>scaled by 0.25·τ<sub>max</sub>/k<sub>p</sub> per actuator group, added to the default pose</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tw"><table>
+      <caption>PPO and simulation settings</caption>
+      <tbody>
+        <tr><th>Networks</th><td>actor and critic MLP [512, 256, 128], ELU, normalized inputs</td></tr>
+        <tr><th>PPO</th><td>clip 0.2, γ 0.99, λ 0.95, 5 epochs, 4 minibatches, LR 1e-3 adaptive (KL 0.01), max grad norm 1</td></tr>
+        <tr><th>Entropy</th><td>0.01 (fine-tunes); 0.001 for the DR + ladder run</td></tr>
+        <tr><th>Rollout</th><td>24 control steps per env per iteration</td></tr>
+        <tr><th>Control</th><td>50 Hz policy (physics 5 ms, decimation 4)</td></tr>
+        <tr><th>Episode</th><td>20 s; ends on time-out, tilt beyond 63° (stochastic), or a non-foot body touching the ground</td></tr>
+        <tr><th>Actuation delay</th><td>2–8 physics steps (10–40 ms); 2–10 (10–50 ms) with DR</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <h2 id="rewards">Reward design</h2>
+  <p>The walking policy is trained on 15 reward terms. Seven are course-specified terms that each student implements in
+    batched PyTorch (the list on the resume); the other eight are provided shaping and safety terms. The implementations
+    are graded coursework and are <strong>withheld from the public repository</strong>, so this section gives the math
+    and weights rather than code. Each term is multiplied by its weight and the 0.02 s control step.</p>
+  <div class="tw"><table>
+    <caption>The seven implemented terms (c = command, v = body-frame velocity, g = gravity in the body frame, a<sub>t</sub> = raw action)</caption>
+    <thead><tr><th>Term</th><th class="n">Weight</th><th>Formula</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td>Linear velocity tracking</td><td class="n">+2.25</td><td>0.5·exp(−e<sub>∥</sub>²/σ² − e<sub>⊥</sub>²/0.3² − v<sub>z</sub>²/0.5²) + 0.5·clip(1 − ‖e‖/max(‖c<sub>xy</sub>‖, 0.1), 0, 1), with σ = clip(0.75‖c<sub>xy</sub>‖, 0.1, 0.5)</td><td>Error split along and across the commanded direction; the tolerance scales with speed; the progress term keeps a gradient when the exponential saturates</td></tr>
+      <tr><td>Yaw-rate tracking</td><td class="n">+2.0</td><td>exp(−(ω<sub>z</sub> − c<sub>ω</sub>)²/0.5)</td><td>Turning on command; roll and pitch rates are penalized by a separate term</td></tr>
+      <tr><td>Upright</td><td class="n">+1.0</td><td>clip(−g<sub>z</sub>, 0, 1)<sup>8</sup></td><td>Signed, so lying down or inverted scores 0; the 8th power makes small leans cost little and large ones a lot</td></tr>
+      <tr><td>Standing pose</td><td class="n">−0.5</td><td>mean|q − q<sub>0</sub>| · clip(1 − max(‖c<sub>xy</sub>‖/0.05, |c<sub>ω</sub>|/0.05), 0, 1)</td><td>Hold the default pose only when told to stand still</td></tr>
+      <tr><td>Foot air time</td><td class="n">+0.1</td><td>Σ<sub>feet</sub> max(0, 1 − |t<sub>air</sub> − 0.275|/0.225) while airborne, only when moving</td><td>Triangular window over 0.05–0.5 s swings: real steps instead of shuffling, no hopping</td></tr>
+      <tr><td>Foot slip</td><td class="n">−0.2</td><td>Σ<sub>feet in contact</sub> ‖v<sub>foot,xy</sub>‖²</td><td>Planted feet stay planted, standing or walking</td></tr>
+      <tr><td>Action smoothness</td><td class="n">−0.1</td><td>‖a<sub>t</sub> − a<sub>t−1</sub>‖² + 0.1‖a<sub>t</sub> − 2a<sub>t−1</sub> + a<sub>t−2</sub>‖²</td><td>Rate and second-difference penalty, easier on real motors</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small muted">Weights are the course specification. A later revision on the <code>rewards-v2-push</code> branch raised standing pose to −2.0.
+    Provided terms: body angular velocity (−0.01), whole-body angular momentum (−0.005), joint limits (−1.0), foot clearance (−2.0),
+    swing height (−0.25), soft landing (curriculum), self-collision (−1.0), upper-body posture (−0.1). The push tasks add
+    a fall penalty (−400 × 0.02 s = −8 per fall) in the ladder task.</p>
+
+  <h2 id="pushes">Disturbance model</h2>
+  <p>Each push is one force on the trunk, held 0.05–0.15 s, followed by 3–6 s to recover. The sampled quantity is the
+    <strong>impulse</strong> J (N·s); the force follows from the duration, so a short push is a jab and a long one a
+    shove with the same effect on momentum. A 50 N·s push on the 19.7 kg robot is a velocity change of about 2.5 m/s.</p>
+  <pre class="eq">J ~ U(J_lo, J_hi)  [N·s]        Δt ~ U(0.05, 0.15) s        |F| = J / Δt
+direction ψ ~ U(0, 2π)   tilt θ ~ U(−20°, 20°)   (relative to the robot's heading)
+F = R_yaw · |F| · (cos θ cos ψ, cos θ sin ψ, sin θ)
+contact r = h·ẑ + s·(side unit vector),  h ~ U(0, 12 cm) above the trunk CoM,  s ~ U(−7, 7) cm
+torque τ = r × F        (applied with F at the trunk CoM)</pre>
+  <p>Impulse, not peak force, decided whether the baseline fell: in a 64-robot check, 300 N for 0.1 s and 200 N for
+    0.15 s (both 30 N·s) knocked over about the same share. So the curriculum ramps impulse directly. The course's
+    small velocity kicks (up to 0.28 m/s) stay on, spaced to every 3–6 s.</p>
+  <pre><span class="cm"># k1_push/mdp/events.py (trunk_impulse.__call__, abridged)</span>
+impulse   = sample_uniform(*impulse_range, n, dev)        <span class="cm"># N·s, the ramped quantity</span>
+duration  = sample_uniform(*duration_s, n, dev)
+size      = impulse / duration                           <span class="cm"># force (N)</span>
+direction = torch.rand(n, device=dev) * 2 * math.pi
+tilt      = torch.deg2rad(sample_uniform(*tilt_deg, n, dev))
+unit      = torch.stack((tilt.cos() * direction.cos(), tilt.cos() * direction.sin(), tilt.sin()), dim=-1)
+force_w   = quat_apply(yaw_quat(root_quat_w), unit) * size[:, None]
+offset_w  = quat_apply(heading, height[:, None] * up + lateral[:, None] * side)
+torque_w  = torch.cross(offset_w, force_w, dim=-1)       <span class="cm"># off-centre pushes twist the trunk</span></pre>
+
+  <div class="tw"><table>
+    <caption>Fixed-stage push curriculum (K1-Push-Flat-v0), counted in PPO iterations from the parent checkpoint</caption>
+    <thead><tr><th>Stage</th><th class="n">From iteration</th><th>Impulse</th><th class="n">Baseline falls (64 robots)</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td class="n">0</td><td>5–20 N·s</td><td class="n">0%</td></tr>
+      <tr><td>1</td><td class="n">1,000</td><td>10–30 N·s</td><td class="n">11%</td></tr>
+      <tr><td>2</td><td class="n">3,000</td><td>15–40 N·s</td><td class="n">33%</td></tr>
+      <tr><td>3</td><td class="n">6,000</td><td>20–50 N·s</td><td class="n">54%</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small">The stage clock counts from the parent checkpoint's saved step counter (504,024 for the HW3 policy),
+    not from zero, so Delta's 4-hour job restarts resume at the right stage instead of resetting to stage 0.</p>
+
+  <h2 id="dr">Domain randomization</h2>
+  <p>The push + DR task widens the HW3 randomization so recovery cannot depend on the exact simulated robot. Every range
+    contains the original one; <code>run.py check</code> asserts that and that nothing else changed.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Parameter</th><th>HW3 / push task</th><th>Push + DR</th></tr></thead>
+    <tbody>
+      <tr><td>Foot friction</td><td>0.75–1.25</td><td>0.4–1.25</td></tr>
+      <tr><td>PD gains (k<sub>p</sub>, k<sub>d</sub>)</td><td>×0.8–1.2</td><td>×0.7–1.3</td></tr>
+      <tr><td>Trunk CoM shift</td><td>±5 cm</td><td>±7 cm</td></tr>
+      <tr><td>Trunk payload (mass scale)</td><td>none</td><td>×0.9–1.3</td></tr>
+      <tr><td>Torque limits</td><td>none</td><td>×0.8–1.0</td></tr>
+      <tr><td>Command latency</td><td>2–8 steps (10–40 ms)</td><td>2–10 steps (10–50 ms)</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small muted">Unchanged from HW3 in both: encoder bias ±0.015 rad, limb and trunk inertia perturbation, terrain contact softness.</p>
+
+  <h2 id="results">Experiments and results <span class="tag sim">simulation</span></h2>
+  <h3>Protocol</h3>
+  <ul>
+    <li>Policies fine-tuned from the HW3 walking checkpoint (<code>model_20999</code>, the one already running on the robot).</li>
+    <li><code>scripts/eval_push_falls.py</code>: 256 robots walk on the play commands; each receives exactly one trunk push drawn
+      from a fixed impulse range (random direction, tilt and contact point, as in training). Velocity kicks are off, so
+      the push is the only disturbance. A robot counts as fallen if the tilt termination fires within 2 s of the push.
+      Robots that fall before their push are excluded. Every checkpoint sees the same seed.</li>
+    <li>Checkpoints <code>stage0</code>–<code>stage3</code> are the fixed-curriculum run sampled at the end of each stage.</li>
+  </ul>
+  <figure class="fig">
+    <img src="/figures/k1-fall-rates.svg" alt="Line chart of fall rate by push strength. Baseline 1, 12, 39, 51 percent; stage1 0, 3, 13, 37 percent; stage3 6, 27, 46, 65 percent." width="720" height="400" loading="lazy" />
+    <figcaption>Fall rate after one push, 256 robots per point. stage1 trained only up to 10–30 N·s, so the shaded levels are held out for it. Data: <code>scripts/figure-data/sim_fall_rates.json</code>.</figcaption>
+  </figure>
+  <div class="tw"><table>
+    <caption>Fall rate (%) after one trunk push, 256 robots per cell</caption>
+    <thead><tr><th>Checkpoint</th><th class="n">5–20 N·s</th><th class="n">10–30 N·s</th><th class="n">15–40 N·s</th><th class="n">20–50 N·s</th></tr></thead>
+    <tbody>
+      <tr><td>Baseline (HW3, no push training)</td><td class="n">1</td><td class="n">12</td><td class="n">39</td><td class="n">51</td></tr>
+      <tr><td>stage0 (trained up to 5–20)</td><td class="n">0</td><td class="n">3</td><td class="n">16</td><td class="n">32</td></tr>
+      <tr class="hl"><td>stage1 (trained up to 10–30)</td><td class="n">0</td><td class="n">3</td><td class="n"><strong>13</strong></td><td class="n">37</td></tr>
+      <tr><td>stage2 (trained up to 15–40)</td><td class="n">1</td><td class="n">11</td><td class="n">30</td><td class="n">47</td></tr>
+      <tr><td>stage3 (trained up to 20–50)</td><td class="n">6</td><td class="n">27</td><td class="n">46</td><td class="n">65</td></tr>
+    </tbody>
+  </table></div>
+  <figure class="fig">
+    <img src="/figures/k1-recovery-15-40.svg" alt="Bar chart of recovery at 15 to 40 N·s: baseline 61, stage0 84, stage1 87, stage2 70, stage3 54 percent." width="720" height="250" loading="lazy" />
+    <figcaption>Recovery = 100% − fall rate at 15–40 N·s. Training on survivable pushes generalized to harder ones; training on the hardest stage made the policy worse than no push training at every level.</figcaption>
+  </figure>
+  <p><strong>Findings.</strong> stage1 cut falls at 15–40 N·s from 39% to 13% (recovery 61% → 87%) without ever training at
+    that level. Continuing the same schedule undid it: more aggressive curricula fell below the untrained baseline
+    (stage3 at every level). Each cell is one run and one seed, so differences of a few points (for example stage0 vs
+    stage1 at 15–40 N·s) are within run-to-run noise; no confidence intervals are claimed.</p>
+
+  <h2 id="failure">Failure analysis and the adaptive curriculum</h2>
+  <h3>What the fall test showed</h3>
+  <p>The fall-rate table above is the evidence for the collapse: each extra stage of the fixed schedule past 10–30 N·s
+    made the policy worse at every test level, and stage3 ended below the untrained baseline (6 / 27 / 46 / 65% falls
+    against 1 / 12 / 39 / 51%).</p>
+  <h3>What the training logs showed</h3>
+  <ul>
+    <li>The <code>illegal_contact</code> termination (a non-foot body touching the ground) stepped up at each curriculum stage switch and did not come back down within a stage.</li>
+    <li>The policy's action standard deviation (<code>Policy/mean_std</code>) rose from 0.41 to 0.63 over the later stages, so PPO was not settling on an improvement.</li>
+  </ul>
+  <p>I traced the collapse in the training logs to illegal-contact terminations spiking at each curriculum stage while
+    action noise rose: at 15–40 and 20–50 N·s too many training pushes could not be survived at all, so they carried no
+    useful learning signal and drowned out the pushes that could. The rising action noise meant PPO had no consistent
+    improvement to commit to, not that it lacked exploration.
+    <span class="muted">Source: experiment log, <a href="https://github.com/HridikH/k1-push-recovery/blob/main/PROGRESS.md">PROGRESS.md</a>, Nov 2 entry.</span></p>
+
+  <h3>Survival-gated ladder</h3>
+  <p>Instead of switching on a fixed iteration count, the push only gets harder once the robot survives it.</p>
+  <ul>
+    <li><strong>13 levels</strong> from 5–20 to 20–50 N·s: the four test ranges plus three evenly spaced steps between each.</li>
+    <li>Every <strong>200 iterations</strong>, with at least <strong>3,000 pushes</strong> counted: step up if survival ≥ <strong>85%</strong>, step down if &lt; 70%, otherwise hold.</li>
+    <li>A push is survived if no fall or illegal contact happens within 2 s of it (the benchmark's definition; time-outs are not falls).</li>
+    <li>The level is written atomically to a JSON state file, so a 4-hour job restart resumes on the same level.</li>
+    <li>A fall penalty (weight −400, i.e. −8 per fall) makes falling cost about twice what it did.</li>
+  </ul>
+  <pre><span class="cm"># k1_push/mdp/adaptive.py (adaptive_push_curriculum.__call__, abridged)</span>
+total    = term.n_survived + term.n_fell
+survival = term.n_survived / total.clamp(min=1)
+if now - self._mark >= dwell_steps and int(total.item()) >= min_pushes:
+    rate, old = float(survival.item()), self.level
+    if rate >= up and self.level &lt; len(self._ladder) - 1:     <span class="cm"># up = 0.85</span>
+        self.level += 1
+    elif rate &lt; down and self.level > 0:                      <span class="cm"># down = 0.70</span>
+        self.level -= 1
+    self.history.append([int(now), old, self.level, round(rate, 4), int(total.item())])
+    self._apply(); self._save()                               <span class="cm"># impulse_range ← ladder[level]; JSON for resumes</span>
+    self._mark = now; term.clear_counts()</pre>
+  <p>Before it ran on the real simulator, the counting and level logic was tested on a mock push/fall process with known
+    fall rates (measured 95/90/70% survival against 95/90/70% set; it climbed, held at 70%, resumed at the saved level
+    after a restart, and climbed again once survival reached 84%).</p>
+  <figure class="fig">
+    <img src="/figures/k1-adaptive-ladder.svg" alt="Step chart: the ladder climbed from 20 to 40 N·s upper bound in 8 decisions, then to 45 N·s, and held. Survival stayed between 79 and 86 percent after the climb and never dropped below the 70 percent step-down line." width="720" height="420" loading="lazy" />
+    <figcaption>One ladder run (laptop RTX 3050), read from its state file. The ladder climbed to 15–40 N·s in eight decisions, held there
+      while survival sat at 79–82%, then reached 17.5–45 N·s and held at 81–85% survival. It never stepped down. Data: <code>scripts/figure-data/adaptive_ladder_rtx3050.json</code>.</figcaption>
+  </figure>
+  <div class="note">
+    <strong>Outcome.</strong> The survival-gated ladder avoided the collapse: survival stayed above 79% at every decision
+    and the ladder never had to step down, where the fixed schedule had held the robot at levels it mostly could not survive.
+  </div>
+
+  <h2 id="infra">Training infrastructure</h2>
+  <ul>
+    <li><strong>Multi-GPU training jobs</strong> on NVIDIA A100, A40 and GH200 GPUs on NCSA Delta and DeltaAI through Slurm, with local runs on an RTX 3050 laptop.</li>
+    <li><strong>4,096 parallel environments</strong>, batched on the GPU, reaching <strong>~400,000 environment steps per second on GH200</strong>. Jobs run under a 4-hour limit, with several (seeds, tasks, evals) side by side.</li>
+    <li>Runs are chains of 4-hour jobs that resume from the last checkpoint (saved every 50 iterations). The push curriculum and the ladder were written to survive that: the stage clock counts from the parent checkpoint's step, and the ladder level lives in a state file.</li>
+    <li>Every task is checked against its parent by <code>run.py check</code> before it trains: the push task must equal the baseline except for the push, DR must equal the push task except for the widened ranges, and so on.</li>
+    <li>Logging to Weights &amp; Biases; checkpoints exported to ONNX with Booster's metadata for deployment.</li>
+  </ul>
+
+  <h2 id="hardware">Sim-to-real deployment <span class="tag done">hardware</span></h2>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 960 230" role="img" aria-labelledby="dg2t dg2d" font-family="-apple-system, Helvetica, Arial, sans-serif">
+      <title id="dg2t">Deployment pipeline</title>
+      <desc id="dg2d">The trained checkpoint is exported to ONNX and run on the K1's onboard computer by Booster's deploy tool. It builds the same 75-dimensional observation from the IMU and joint encoders, runs the policy at 50 Hz, and publishes joint targets on /joint_ctrl, which the K1's motor controllers track. If tilt passes 60 degrees the tool stops the policy and puts the robot in damping mode. A second terminal records ROS 2 bags.</desc>
+      <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#6e6e73"/></marker></defs>
+      <rect x="10" y="60" width="150" height="80" rx="10" fill="#f5f5f7" stroke="#d2d2d7"/>
+      <text x="22" y="88" font-size="13" font-weight="600">Checkpoint</text>
+      <text x="22" y="108" font-size="11.5" fill="#3a3a3c">PyTorch → ONNX</text>
+      <text x="22" y="126" font-size="11.5" fill="#3a3a3c">+ Booster metadata</text>
+      <rect x="210" y="30" width="330" height="140" rx="10" fill="#fff" stroke="#0071e3"/>
+      <text x="222" y="54" font-size="13" font-weight="600">booster_deploy on the K1's computer</text>
+      <text x="222" y="78" font-size="11.5" fill="#3a3a3c">IMU + encoders → 75-dim observation</text>
+      <text x="222" y="98" font-size="11.5" fill="#3a3a3c">ONNX policy, 50 Hz → 22 joint targets</text>
+      <text x="222" y="118" font-size="11.5" fill="#3a3a3c">X: Custom mode (Booster warm-up walker)</text>
+      <text x="222" y="138" font-size="11.5" fill="#3a3a3c">A: our policy takes over</text>
+      <text x="222" y="158" font-size="11.5" fill="#b5701a">tilt > 60° → stop, exit to damping</text>
+      <rect x="590" y="60" width="170" height="80" rx="10" fill="#f5f5f7" stroke="#d2d2d7"/>
+      <text x="602" y="88" font-size="13" font-weight="600">K1 joint PD</text>
+      <text x="602" y="108" font-size="11.5" fill="#3a3a3c">/joint_ctrl, 50 Hz</text>
+      <text x="602" y="126" font-size="11.5" fill="#3a3a3c">/low_state, ~500 Hz</text>
+      <rect x="800" y="60" width="150" height="80" rx="10" fill="#fff" stroke="#d2d2d7"/>
+      <text x="812" y="88" font-size="13" font-weight="600">ros2 bag record</text>
+      <text x="812" y="108" font-size="11.5" fill="#3a3a3c">states, IMU, joints,</text>
+      <text x="812" y="126" font-size="11.5" fill="#3a3a3c">remote, fall detector</text>
+      <line x1="160" y1="100" x2="206" y2="100" stroke="#6e6e73" stroke-width="1.5" marker-end="url(#ar2)"/>
+      <line x1="540" y1="100" x2="586" y2="100" stroke="#6e6e73" stroke-width="1.5" marker-end="url(#ar2)"/>
+      <line x1="760" y1="100" x2="796" y2="100" stroke="#6e6e73" stroke-width="1.5" marker-end="url(#ar2)"/>
+      <text x="485" y="205" font-size="11.5" fill="#6e6e73" text-anchor="middle">Same observation layout and action scaling as training; the deploy task is k1_mjlab_velocity_flat.</text>
+    </svg>
+  </figure>
+
+  <h3>Safety and method</h3>
+  <ul>
+    <li>The robot ran on a safety gantry, with a spotter on the strap; pushes were by hand, to the trunk.</li>
+    <li>Launched with <code>--exit-mode damping</code>: if the deploy tool's fall stop fires (projected gravity z &gt; −0.5, about 60° of tilt) the motors go limp and the gantry catches the robot, instead of Booster's own walking controller taking over and producing a "save" that is not ours.</li>
+    <li>Before the A press, Custom mode runs Booster's warm-up walker, not our policy. Pushes were only counted after A.</li>
+    <li>Each run was recorded as a ROS 2 bag (<code>/robot_states</code>, <code>/fall_down</code>, <code>/low_state</code>, <code>/remote_controller_state</code>, <code>/joint_ctrl</code>).</li>
+    <li>The bags were checked afterwards: who had control at every instant (our policy runs only in mode 3 / body control 6), the K1's own fall detector, the largest gap in <code>/joint_ctrl</code> (60–78 ms in every run), and trunk tilt from the IMU, tilt = acos(cos roll · cos pitch).</li>
+  </ul>
+
+  <h3>Results</h3>
+  <div class="tw"><table>
+    <caption>Hardware runs (pushes by hand, impulse not measured)</caption>
+    <thead><tr><th>Bag</th><th>Policy</th><th class="n">Policy in control</th><th class="n">Pushes</th><th class="n">Falls</th><th class="n">Peak tilt</th><th>Booster controller took over?</th></tr></thead>
+    <tbody>
+      <tr><td><code>deploy3_hw3_run1</code></td><td>Baseline (HW3)</td><td class="n">43 s</td><td class="n">3</td><td class="n">0</td><td class="n">24°</td><td>No, until the operator stopped the run</td></tr>
+      <tr><td><code>deploy3_stage1_run1</code></td><td>Push-trained (stage1)</td><td class="n">42 s</td><td class="n">~7</td><td class="n">0</td><td class="n">26°</td><td>No</td></tr>
+      <tr><td><code>deploy3_dr_ramp_run1</code></td><td>Push + DR (<code>dr_ramp</code>)</td><td class="n">45 s</td><td class="n">4</td><td class="n">0</td><td class="n">32°</td><td>No</td></tr>
+      <tr><td><code>deploy3_stage1_run2</code></td><td>Push-trained (stage1)</td><td class="n">28 s</td><td class="n">4</td><td class="n">0</td><td class="n">26°</td><td>No</td></tr>
+    </tbody>
+  </table></div>
+  <figure class="fig">
+    <img src="/figures/k1-hw-tilt.svg" alt="Four tilt traces from the hardware runs. Peaks: 24 degrees baseline, 26 and 26 degrees stage1, 32 degrees push plus DR. All far below the 60 degree stop line." width="720" height="630" loading="lazy" />
+    <figcaption>Trunk tilt from the K1's IMU while our policy had control, x-axis in seconds after the A press. Data: <code>scripts/figure-data/hw_tilt_series.json</code>, extracted from the bags.</figcaption>
+  </figure>
+  <p>In every run, every <code>/robot_states</code> message between the A press and the operator's stop read Custom/Custom,
+    the K1 fall detector stayed READY, and the policy kept publishing at 50 Hz. All three policies, the baseline included,
+    held every push. One behavioral difference was visible: the baseline took a few steps and stood still within 3–8 s
+    of a push, while stage1 kept stepping in place for 7–14 s.</p>
+
+  <div class="vids">
+    <figure>
+      <video src="/media/k1-hw-hw3.mp4" poster="/media/k1-hw-hw3-poster.jpg" controls muted playsinline preload="none" aria-label="Baseline HW3 policy on the K1 being pushed by hand"></video>
+      <figcaption>Baseline (HW3) on hardware.</figcaption>
+    </figure>
+    <figure>
+      <video src="/media/k1-hw-stage1.mp4" poster="/media/k1-hw-stage1-poster.jpg" controls muted playsinline preload="none" aria-label="Push-trained stage1 policy on the K1 being pushed by hand"></video>
+      <figcaption>Push-trained (stage1) on hardware.</figcaption>
+    </figure>
+    <figure>
+      <video class="wide" src="/media/k1-sim-push.mp4" poster="/media/k1-sim-push-poster.jpg" controls muted playsinline preload="none" aria-label="Simulated K1 receiving trunk pushes, shown as arrows"></video>
+      <figcaption>Simulation: push arrows show impulse (2 cm per N·s) and the contact point.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Arm flailing and a crouched gait</h3>
+  <p>On hardware the policies walk with a crouched gait (knees deeply bent) and the arms flail during recovery. I traced
+    both to reward design: the upper-body posture and whole-body angular-momentum terms carry very small weights in the
+    walking reward (−0.1 and −0.005), so nothing pushes the policy toward a tall stance or quiet arms. Proposed fix, not
+    yet trained: upper-body posture and angular-momentum terms strong enough to shape the gait.</p>
+
+  <h2 id="limits">Limitations and next steps</h2>
+  <ul>
+    <li><strong>Hardware pushes were not calibrated.</strong> No force or impulse was measured, about 18 pushes over 4 runs, one session. Every policy held every push, so the hardware data cannot rank them. The planned comparison is 3 policies × 4 directions × 3 repeatable levels × 3 repeats (108 trials) with a fixed-swing push stick.</li>
+    <li><strong>Single seed.</strong> Each simulated result is one training run.</li>
+    <li><strong>DR vs no DR</strong> on DR physics is the next simulated comparison (same fall test, <code>--task K1-Push-DR-Flat-v0</code>).</li>
+  </ul>
+
+  <h2 id="resources">Resources</h2>
+  <ul>
+    <li>Source code: <a href="https://github.com/HridikH/k1-push-recovery">github.com/HridikH/k1-push-recovery</a> (public copy; HW3 reward code withheld as coursework)</li>
+    <li>Design docs per component: <a href="https://github.com/HridikH/k1-push-recovery/tree/main/architecture">architecture/</a></li>
+    <li>Experiment log with every result table: <a href="https://github.com/HridikH/k1-push-recovery/blob/main/PROGRESS.md">PROGRESS.md</a></li>
+    <li>Training configurations: <a href="https://github.com/HridikH/k1-push-recovery/blob/main/k1_push/push_cfgs.py">push_cfgs.py</a>, <a href="https://github.com/HridikH/k1-push-recovery/blob/main/k1_push/adaptive_cfgs.py">adaptive_cfgs.py</a>, <a href="https://github.com/HridikH/k1-push-recovery/blob/main/k1_push/dr_cfgs.py">dr_cfgs.py</a></li>
+    <li>Fall-rate benchmark: <a href="https://github.com/HridikH/k1-push-recovery/blob/main/scripts/eval_push_falls.py">eval_push_falls.py</a></li>
+    <li>Hardware videos (original files): <a href="https://drive.google.com/drive/folders/13ApoX8ARui_jXwjQTF56umYJQiuYH7tX">Google Drive</a></li>
+    <li>Final report: in progress, due with the December poster.</li>
+  </ul>
+</main>
+
+<footer>
+  <a href="/">Home</a><a href="/projects.html">Engineering notes</a><a href="/media/Hridik_Hingorani_Resume.pdf">Resume</a><a href="https://github.com/HridikH">GitHub</a><a href="https://www.linkedin.com/in/HridikH">LinkedIn</a><a href="mailto:hridikh2@illinois.edu">hridikh2@illinois.edu</a>
+</footer>
+</body>
+</html>

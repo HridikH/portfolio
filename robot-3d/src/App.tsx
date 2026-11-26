@@ -10,7 +10,7 @@ import Effects from './three/Effects';
 import CameraRig from './three/CameraRig';
 import { detectTier, prefersReducedMotion } from './three/quality';
 import type { PaletteMode } from './three/materials';
-import { stations, links, offClock, contact, Station, Region } from './data/stations';
+import { stations, links, offClock, contact, highlights, Station, Region } from './data/stations';
 import { recordSections, phone, RecordSectionData } from './data/resume';
 
 const SECTIONS = 1 + stations.length + recordSections.length + 2;
@@ -154,11 +154,16 @@ function StationCard({ s, active }: { s: Station; active: boolean }) {
           <span key={t}>{t}</span>
         ))}
       </div>
+      {s.caseStudy && (
+        <a className="card-link case" href={s.caseStudy}>
+          {s.id === 'humanoidrl' ? 'Read the case study →' : 'Technical notes →'}
+        </a>
+      )}
       {s.link ? (
         <a className="card-link" href={s.link} target="_blank" rel="noopener noreferrer">
-          View project ↗
+          {s.id === 'humanoidrl' ? 'Source code ↗' : 'View project ↗'}
         </a>
-      ) : pending ? (
+      ) : s.caseStudy ? null : pending ? (
         <span className="card-link pending">
           {s.phase === 'planned' ? 'Planned · not yet built' : 'In progress · repo coming'}
         </span>
@@ -276,7 +281,9 @@ export default function App() {
         <div className="hud-status">
           {activeStation ? `${activeStation.no} · ${activeStation.hud}` : 'DIAGNOSTIC MODE'}
         </div>
-        <nav className="hud-actions">
+        <nav className="hud-actions" aria-label="Site">
+          <a href="/k1.html">K1 case study</a>
+          <a href="/projects.html">Notes</a>
           <a href={links.resume} target="_blank" rel="noopener noreferrer">Resume ↓</a>
           <a href={`mailto:${links.email}`}>Contact</a>
         </nav>
@@ -286,9 +293,34 @@ export default function App() {
       <main className="scroll-col">
         <section className="panel hero">
           <div className="hero-copy">
-            <p className="hero-kicker">Portfolio · diagnostic mode</p>
+            <p className="hero-kicker">Robotics · Reinforcement Learning · Control Systems</p>
             <h1>Hridik Hingorani</h1>
-            <p className="hero-role">Robotics, controls, embedded systems.</p>
+            <p className="hero-role">
+              Computer Engineering at UIUC, Mathematics minor, graduating May 2027. I train humanoid
+              policies in simulation, run them on real robots, and write the feedback controllers underneath.
+            </p>
+            <div className="hero-feature">
+              <a className="hero-feature-title" href="/k1.html">
+                Featured: sim-to-real push recovery on the Booster K1 humanoid →
+              </a>
+              <ul className="hero-stats" aria-label="Research highlights">
+                {highlights.map((h) => (
+                  <li key={h.value}>
+                    <span className="hs-k">{h.context}</span>
+                    <span className="hs-v">{h.value}</span>
+                    <span className="hs-c">{h.caption}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="hero-links">
+                <a href="/k1.html#hardware">Hardware video</a>
+                <a href="https://github.com/HridikH/k1-push-recovery" target="_blank" rel="noopener noreferrer">Code ↗</a>
+                <a href="/projects.html">Engineering notes</a>
+                <a href="/projects.html#skills">Skills</a>
+                <a href={links.resume} target="_blank" rel="noopener noreferrer">Resume ↓</a>
+                <a href={`mailto:${links.email}`}>Contact</a>
+              </div>
+            </div>
             <p className="hero-sub">
               Eleven projects, mapped head to toe on the robot. Scroll to run the check.
             </p>

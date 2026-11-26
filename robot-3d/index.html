@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hridik Hingorani: Robotics &amp; Controls</title>
+    <title>Hridik Hingorani: Robotics, RL &amp; Controls</title>
     <meta
       name="description"
-      content="A diagnostic walk down a humanoid robot. Eleven projects, head to toe. Robotics, controls, embedded systems."
+      content="Robotics, reinforcement learning and control systems. Sim-to-real humanoid push recovery on the Booster K1, real-time impedance control, autonomous driving, and more."
     />
     <link rel="preload" href="/models/g1.glb" as="fetch" crossorigin />
   </head>
@@ -15,20 +15,20 @@
     <noscript>
       <div style="max-width: 640px; margin: 4rem auto; padding: 0 1.5rem; font-family: -apple-system, Helvetica, Arial, sans-serif; color: #1d1d1f;">
         <h1 style="letter-spacing: -0.03em;">Hridik Hingorani</h1>
-        <p>Robotics, controls, embedded systems. The interactive version of this site needs JavaScript; the projects are listed below.</p>
+        <p>Robotics &middot; reinforcement learning &middot; control systems. Computer Engineering at UIUC, Mathematics minor, May 2027. The interactive version of this site needs JavaScript; the projects are listed below, and the <a href="/k1.html" style="color: #0071e3;">K1 case study</a> and <a href="/projects.html" style="color: #0071e3;">engineering notes</a> work without it.</p>
         <p style="font-size: 0.9rem; color: #6e6e73;">Completed work first. In-progress and planned items are labeled.</p>
         <ul style="line-height: 1.7;">
-          <li><strong>Real-Time Task-Space Impedance Control, CRS Arm</strong> · 1 kHz task-space impedance controller in C on a TMS320F28335 DSP, joint torque commands to a 3-joint arm, 5 N&middot;m saturation</li>
-          <li><strong><a href="https://github.com/HridikH/ur3-image-drawing" style="color: #0071e3;">UR3 Vision-Guided Contour Drawing</a></strong> · from-scratch closed-form 6-DOF inverse kinematics, product-of-exponentials forward kinematics, Canny and contour extraction, 142-stroke drawing in 7 minutes</li>
-          <li><strong>RISC-V Preemptive Multitasking OS Kernel</strong> · roughly 6,000 lines of C, preemptive scheduler, Sv39 three-level paging, VirtIO, FAT, pipes, shell · <em>code available on request</em></li>
-          <li><strong>Autonomous Vehicle Perception and Control</strong> · <em>in progress</em> · perception, LiDAR sensing, reinforcement learning, and vehicle control for a self-driving stack on a Polaris GEM platform</li>
-          <li><strong><a href="https://github.com/HridikH/k1-push-recovery" style="color: #0071e3;">Humanoid Push Recovery</a></strong> · PPO push-recovery policy for the 19.7 kg Booster K1, trained in mjlab on 4,096 parallel sims on NCSA Delta; falls at 15 to 40 N&middot;s cut from 39% to 13%; deployed sim-to-real on Booster K1 hardware</li>
-          <li><strong>Flex-Sensor Teleoperated Hand</strong> · <em>in progress</em> · 5-channel flex-sensor board routed in KiCad, ESP-NOW leader-follower link, PCA9685 servo output</li>
-          <li><strong>Animatronic Grogu</strong> · <em>planned</em> · 22-DOF bipedal animatronic with an LLM voice pipeline (ECE 445 capstone)</li>
-          <li><strong><a href="https://github.com/HridikH/JupiterAI" style="color: #0071e3;">Jupiter AI</a></strong> · fully local voice assistant on Apple Silicon; Whisper STT, Qwen3 on MLX, Kokoro TTS, real barge-in</li>
-          <li><strong>Inverted Pendulum, Pole Placement and Observer</strong> · pole-placement state feedback with a Luenberger observer as two decoupled 2-state blocks, gain-scheduled across upright and hanging linearizations, friction parameters from logged step data, 1.1 s settling time</li>
-          <li><strong><a href="https://github.com/HridikH/cart-pole-control" style="color: #0071e3;">Cart-Pole Control Simulator</a></strong> · Rust, scratch LQR via discrete Riccati iteration, 6 gain presets benchmarked against tuned PID, RK4 at 1 kHz</li>
-          <li><strong><a href="https://github.com/HridikH/motion-planning-visualizer" style="color: #0071e3;">Motion Planning Visualizer: A* vs RRT*</a></strong> · from-scratch A* and RRT*, A* 6 to 11% shorter paths under 20 ms</li>
+          <li><strong><a href="/k1.html" style="color: #0071e3;">Humanoid Push Recovery, Booster K1</a></strong> &middot; PPO push recovery for the 19.7 kg K1, trained in mjlab on 4,096 parallel environments on NCSA Delta A100, A40 and GH200 GPUs (~400,000 steps/s on GH200); simulated recovery from one unseen 15 to 40 N&middot;s push raised from 61% to 87%; on hardware, zero falls across about 18 hand pushes (peak tilt 32&deg;) &middot; <a href="https://github.com/HridikH/k1-push-recovery" style="color: #0071e3;">code</a></li>
+          <li><strong><a href="/projects.html#crs" style="color: #0071e3;">Real-Time Task-Space Impedance Control, CRS Arm</a></strong> &middot; 1 kHz task-space impedance controller in C on a TMS320F28335 DSP, joint torque commands to a 3-joint arm, 5 N&middot;m saturation</li>
+          <li><strong><a href="/projects.html#ur3" style="color: #0071e3;">UR3 Vision-Guided Contour Drawing</a></strong> &middot; closed-form 6-DOF inverse kinematics, product-of-exponentials forward kinematics, Canny and contour extraction, 142-stroke drawing in 7 minutes &middot; <a href="https://github.com/HridikH/ur3-image-drawing" style="color: #0071e3;">code</a></li>
+          <li><strong>RISC-V Preemptive Multitasking OS Kernel</strong> &middot; roughly 6,000 lines of C, preemptive scheduler, Sv39 three-level paging, VirtIO, FAT, pipes, shell &middot; <em>code available on request</em></li>
+          <li><strong><a href="/projects.html#gem" style="color: #0071e3;">Self-Driving Stack, Polaris GEM</a></strong> &middot; <em>in progress</em> &middot; ROS 2 stack on a full-scale EV; Pure Pursuit with a Stanley comparison, speed PID, command limits; lane keeping from the camera on the vehicle</li>
+          <li><strong>Flex-Sensor Teleoperated Hand</strong> &middot; <em>in progress</em> &middot; 5-channel flex-sensor board routed in KiCad, ESP-NOW leader-follower link, PCA9685 servo output</li>
+          <li><strong><a href="/projects.html#glasses" style="color: #0071e3;">AI Smart Glasses</a></strong> &middot; <em>in progress</em> &middot; ECE 445; custom ESP32-S3 board with an OV5640 camera; firmware integrated with a vision pipeline that shows a component's datasheet in about 1 s</li>
+          <li><strong><a href="https://github.com/HridikH/JupiterAI" style="color: #0071e3;">Jupiter AI</a></strong> &middot; fully local voice assistant on Apple Silicon; Whisper STT, Qwen3 on MLX, Kokoro TTS, real barge-in</li>
+          <li><strong><a href="/projects.html#balance" style="color: #0071e3;">Inverted Pendulum, Pole Placement and Observer</a></strong> &middot; pole-placement state feedback with a Luenberger observer, gain-scheduled across upright and hanging linearizations, friction identified from logged data, 1.1 s settling time</li>
+          <li><strong><a href="https://github.com/HridikH/cart-pole-control" style="color: #0071e3;">Cart-Pole Control Simulator</a></strong> &middot; Rust, LQR via discrete Riccati iteration, 6 gain presets benchmarked against tuned PID, RK4 at 1 kHz</li>
+          <li><strong><a href="https://github.com/HridikH/motion-planning-visualizer" style="color: #0071e3;">Motion Planning Visualizer: A* vs RRT*</a></strong> &middot; from-scratch A* and RRT*, A* 6 to 11% shorter paths under 20 ms</li>
         </ul>
         <p>
           <a href="/media/Hridik_Hingorani_Resume.pdf" style="color: #0071e3;">Resume (PDF)</a> ·

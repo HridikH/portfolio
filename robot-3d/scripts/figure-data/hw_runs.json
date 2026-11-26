@@ -1,0 +1,11 @@
+{
+  "source": "ROS 2 bags deploy3_*_run* recorded on the K1 (Nov 2026); analysed with hardware/check_takeover.py and hardware/check_pushes.py",
+  "note": "pushes = operator count (hand pushes, impulse not measured); detector merges pushes closer than 2.5 s. max tilt = acos(cos(roll) cos(pitch)) from /low_state IMU while the policy had control (Custom/Custom, after the A press).",
+  "deploy_fall_stop_deg": 60,
+  "runs": [
+    {"bag": "deploy3_hw3_run1",     "policy": "Baseline (HW3)",          "pushes": 3, "falls": 0, "max_tilt_deg": 23.8, "policy_on_s": 43.4},
+    {"bag": "deploy3_stage1_run1",  "policy": "Push-trained (stage1)",   "pushes": 7, "falls": 0, "max_tilt_deg": 26.0, "policy_on_s": 42.4},
+    {"bag": "deploy3_dr_ramp_run1", "policy": "Push + DR (dr_ramp)",     "pushes": 4, "falls": 0, "max_tilt_deg": 32.4, "policy_on_s": 44.9},
+    {"bag": "deploy3_stage1_run2",  "policy": "Push-trained (stage1)",   "pushes": 4, "falls": 0, "max_tilt_deg": 25.8, "policy_on_s": 27.8}
+  ]
+}

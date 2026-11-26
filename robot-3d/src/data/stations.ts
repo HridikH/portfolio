@@ -31,6 +31,7 @@ export type Station = {
   blurb: string;
   tags: string[];
   link?: string; // outbound repo/report/demo; omitted when no verified URL exists yet
+  caseStudy?: string; // on-site technical write-up (k1.html, projects.html#...)
   linkNote?: string; // shown in place of a link for completed work with no public repo (e.g. private coursework)
   phase?: Phase; // undefined == completed
   featuredRank?: number; // 1 = strongest; used for featured ordering, not body order
@@ -47,9 +48,35 @@ export type Station = {
 // strictly descending it; bodyY still pins each project to its correct body region.
 export const stations: Station[] = [
   {
-    id: 'crs',
-    metric: '1 kHz torque loop · 5 N-m saturation',
+    id: 'humanoidrl',
     no: 'PRJ-01',
+    region: 'core',
+    hud: 'CORE / POLICY',
+    anatomy: 'Learned balance',
+    title: 'Humanoid Push Recovery, Booster K1',
+    // Sim: 256-robot fall test, one trunk push each, falls counted for 2 s (scripts/eval_push_falls.py).
+    // Baseline (HW3) 39% vs push-trained stage1 13% falls at 15-40 N·s, a level stage1 never trained on.
+    // Hardware: ROS 2 bags deploy3_*; ~18 hand pushes (impulse not measured), 0 falls, peak tilt 32.4°.
+    metric: 'Sim recovery 61% → 87% · hardware 0 falls / ~18 pushes',
+    phase: 'completed',
+    featuredRank: 1,
+    blurb:
+      'A PPO walking policy for the 19.7 kg Booster K1, fine-tuned to recover from shoves to the trunk, trained in mjlab on 4,096 parallel environments across multi-GPU jobs on NCSA Delta A100, A40 and GH200 GPUs (~400,000 steps/s on GH200). Team of three. Pushes are force impulses on the trunk with random direction, tilt and contact point, ramped by impulse (N·s). In simulation, training up to 10–30 N·s cut falls from one unseen 15–40 N·s push from 39% to 13%, while continuing to 20–50 N·s fell below the untrained baseline. I traced that collapse to illegal-contact terminations spiking at each stage while action noise rose, and built a survival-gated 13-level push ladder that only gets harder once 85% of pushes are survived, a domain-randomization task (friction, PD gains, CoM, payload, torque limits, 10–50 ms latency), and the fall-rate benchmark. Deployed on the physical K1: zero falls across about 18 hand pushes on a safety gantry, peak trunk tilt 32° against the deploy tool\u2019s 60° stop.',
+    tags: ['Python', 'PyTorch', 'PPO', 'mjlab', 'MuJoCo', 'Domain Randomization', 'Slurm', 'Booster K1'],
+    link: 'https://github.com/HridikH/k1-push-recovery',
+    caseStudy: '/k1.html',
+    gallery: [
+      { src: `${BASE}media/k1-sim-push.mp4`, poster: `${BASE}media/k1-sim-push-poster.jpg`, caption: 'Domain-randomized policy taking pushes in sim' },
+      { src: `${BASE}media/k1-robot.mp4`, poster: `${BASE}media/k1-robot-poster.jpg`, caption: 'Walking policy on the physical K1' },
+    ],
+    side: 'right',
+    bodyY: 0.6,
+  },
+  {
+    id: 'crs',
+    caseStudy: '/projects.html#crs',
+    metric: '1 kHz torque loop · 5 N-m saturation',
+    no: 'PRJ-02',
     region: 'arms',
     hud: 'ARMS / HANDS',
     anatomy: 'Manipulators',
@@ -69,8 +96,9 @@ export const stations: Station[] = [
   },
   {
     id: 'ur3',
+    caseStudy: '/projects.html#ur3',
     metric: '142 strokes, drawn in 7 minutes',
-    no: 'PRJ-02',
+    no: 'PRJ-03',
     region: 'eyes',
     hud: 'OPTIC / VISION',
     anatomy: 'Visual cortex',
@@ -88,7 +116,7 @@ export const stations: Station[] = [
   {
     id: 'kernel',
     metric: '6,000 lines of C',
-    no: 'PRJ-03',
+    no: 'PRJ-04',
     region: 'spine',
     hud: 'SPINE / BUS',
     anatomy: 'Nervous system',
@@ -107,7 +135,8 @@ export const stations: Station[] = [
   },
   {
     id: 'autonomy',
-    no: 'PRJ-04',
+    caseStudy: '/projects.html#gem',
+    no: 'PRJ-05',
     region: 'brain',
     hud: 'BRAIN / AUTONOMY',
     anatomy: 'Decision and planning',
@@ -124,29 +153,6 @@ export const stations: Station[] = [
     media: { type: 'video', src: `${BASE}media/gem-ev4.mp4`, poster: `${BASE}media/gem-ev4-poster.jpg` },
     side: 'left',
     bodyY: 0.06,
-  },
-  {
-    id: 'humanoidrl',
-    no: 'PRJ-05',
-    region: 'core',
-    hud: 'CORE / POLICY',
-    anatomy: 'Learned balance',
-    title: 'Humanoid Push Recovery, Booster K1',
-    // Measured: 256-robot sim fall test, one trunk push each, falls counted for 2 s.
-    // Baseline (HW3) 39% vs push-trained stage1 13% at 15–40 N·s, a level stage1 never trained on.
-    metric: 'Falls at 15–40 N·s: 39% → 13%',
-    phase: 'completed',
-    featuredRank: 3,
-    blurb:
-      'A PPO walking policy for the 19.7 kg Booster K1 humanoid that recovers from stick-style shoves to the torso, trained in mjlab on 4,096 parallel simulated robots on NCSA Delta GPUs. Modeled each push as a force impulse on the trunk with random direction, ±20° tilt and contact point, and found that impulse (N·s), not peak force, decides whether the robot falls, so the curriculum ramps impulse directly. Made that curriculum resume-safe across Delta’s 4-hour job restarts. When fixed stages past 10–30 N·s made the policy worse at every level, diagnosed it from the training curves (unsurvivable pushes drowning the learning signal) and replaced it with a survival-gated 13-level ladder that only gets harder once 85% of pushes are survived. Added a domain-randomization task (foot friction, PD gains, CoM shift, payload, torque limits, 10–50 ms command latency) for sim-to-real. Every task is verified against the baseline by a config-diff check before it trains, and a fall-rate benchmark scores each checkpoint by push strength and direction. Deployed the policy sim-to-real on the physical Booster K1 hardware.',
-    tags: ['Python', 'PPO', 'mjlab', 'MuJoCo', 'Domain Randomization', 'Slurm', 'Booster K1'],
-    link: 'https://github.com/HridikH/k1-push-recovery',
-    gallery: [
-      { src: `${BASE}media/k1-sim-push.mp4`, poster: `${BASE}media/k1-sim-push-poster.jpg`, caption: 'Domain-randomized policy taking pushes in sim' },
-      { src: `${BASE}media/k1-robot.mp4`, poster: `${BASE}media/k1-robot-poster.jpg`, caption: 'Walking policy on the physical K1' },
-    ],
-    side: 'right',
-    bodyY: 0.6,
   },
   {
     id: 'flexhand',
@@ -166,20 +172,21 @@ export const stations: Station[] = [
     bodyY: 0.56,
   },
   {
-    id: 'grogu',
-    metric: '22 DOF',
+    id: 'glasses',
     no: 'PRJ-07',
-    region: 'face',
-    hud: 'FACE / EXPR',
-    anatomy: 'Facial actuation',
-    title: 'Animatronic Grogu',
-    phase: 'planned',
-    featuredRank: 9,
+    region: 'eyes',
+    hud: 'OPTIC / WEARABLE',
+    anatomy: 'Embedded vision',
+    title: 'AI Smart Glasses for Hands-Free Datasheet Retrieval',
+    phase: 'in-progress',
+    featuredRank: 7,
     blurb:
-      'ECE 445 senior design capstone, currently in planning. A 22-DOF bipedal animatronic. Planned scope covers the software, the LLM voice pipeline (local LLM with Claude API, Whisper in, Coqui out), and the mechanical design, on a custom PCB for power.',
-    tags: ['Python', 'C++', 'KiCad', 'ROS', 'LLM'],
+      'ECE 445 senior design, team of three: an end-to-end embedded AI wearable on a custom ESP32-S3 board with an OV5640 camera, designed from scratch with no development boards. I wrote the embedded firmware for camera capture and communication and integrated it with a working computer vision and object-tracking pipeline that identifies a component and displays its datasheet in about 1 s.',
+    metric: 'Component to datasheet in about 1 s',
+    tags: ['C', 'ESP-IDF', 'ESP32-S3', 'OV5640', 'Custom PCB'],
+    caseStudy: '/projects.html#glasses',
     side: 'right',
-    bodyY: 0.2,
+    bodyY: 0.16,
   },
   {
     id: 'jupiter',
@@ -201,6 +208,7 @@ export const stations: Station[] = [
   },
   {
     id: 'pendulum',
+    caseStudy: '/projects.html#balance',
     // 1.1 s is the measured figure (confirmed by Hridik, backed by a plot). The old
     // 3 s claim and the ~0.9 s design-pole prediction are both retired; use 1.1 s only.
     metric: '1.1 s settling time',
@@ -222,6 +230,7 @@ export const stations: Station[] = [
   },
   {
     id: 'cartpole',
+    caseStudy: '/projects.html#balance',
     metric: '1 kHz RK4 · scratch LQR',
     no: 'PRJ-10',
     region: 'legs',
@@ -256,6 +265,14 @@ export const stations: Station[] = [
   },
 ];
 
+// Homepage research highlights. Each one names its context; simulated numbers are never presented as hardware.
+export const highlights = [
+  { context: 'Simulation', value: '61% → 87%', caption: 'recovery from one unseen 15–40 N·s push, 256 trials per policy' },
+  { context: 'Hardware', value: '0 falls', caption: 'about 18 hand pushes on the physical K1, peak tilt 32°' },
+  { context: 'Training', value: '~400k steps/s', caption: 'on GH200, 4,096 parallel environments, NCSA Delta' },
+  { context: 'Hardware', value: '1 kHz', caption: 'task-space impedance control in bare-metal C on a CRS arm' },
+];
+
 export const links = {
   github: 'https://github.com/HridikH', // profile, not the portfolio repo
   linkedin: 'https://www.linkedin.com/in/HridikH',
@@ -278,6 +295,6 @@ export const offClock = {
 export const contact = {
   label: 'End of diagnostic',
   title: 'Building future readiness today.',
-  body: 'Open to full-time roles in robotics and controls starting summer 2027. Champaign, IL.',
+  body: 'Open to full-time roles in robotics, reinforcement learning and controls starting summer 2027. Champaign, IL.',
   status: 'open to full-time roles from summer 2027 (robotics & controls)',
 };

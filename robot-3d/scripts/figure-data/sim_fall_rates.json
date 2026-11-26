@@ -1,0 +1,12 @@
+{
+  "source": "HridikH/k1-push-recovery PROGRESS.md, 'Nov 2' entry; produced by scripts/eval_push_falls.py",
+  "protocol": "256 simulated robots per cell, one trunk push each (random direction, +/-20 deg tilt, random contact point), fall = fell_over within 2 s of the push, HW3 velocity kicks off, same seed for every checkpoint",
+  "levels": ["5-20", "10-30", "15-40", "20-50"],
+  "fall_pct": {
+    "Baseline (HW3, no push training)": [1, 12, 39, 51],
+    "stage0 (trained up to 5-20)": [0, 3, 16, 32],
+    "stage1 (trained up to 10-30)": [0, 3, 13, 37],
+    "stage2 (trained up to 15-40)": [1, 11, 30, 47],
+    "stage3 (trained up to 20-50)": [6, 27, 46, 65]
+  }
+}

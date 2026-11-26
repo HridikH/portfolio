@@ -445,3 +445,46 @@ button:focus-visible,
   .hud-status { display: none; }
   .hero-copy h1 { font-size: clamp(2.4rem, 12vw, 3.2rem); }
 }
+
+/* ---------- hero feature + research highlights ---------- */
+.hero-copy { width: 100%; max-width: 760px; margin: 0 auto; min-width: 0; }
+.hud-actions a { white-space: nowrap; }
+.hero-feature {
+  margin: 1.6rem auto 0;
+  max-width: 720px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(29, 29, 31, 0.1);
+  border-radius: 16px;
+  padding: 1rem 1.1rem 0.9rem;
+}
+.hero-feature-title { font-weight: 600; color: var(--text); text-decoration: none; font-size: 0.98rem; }
+.hero-feature-title:hover { color: var(--accent); }
+.hero-stats {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+.hero-stats li { background: rgba(245, 245, 247, 0.9); border-radius: 10px; padding: 0.55rem 0.65rem; }
+.hs-k { display: block; font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.hs-v { display: block; font-size: 1.15rem; font-weight: 650; letter-spacing: -0.02em; margin-top: 0.1rem; }
+.hs-c { display: block; font-size: 0.7rem; line-height: 1.35; color: var(--steel); margin-top: 0.15rem; }
+.hero-links { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; margin-top: 0.75rem; font-size: 0.84rem; }
+.hero-links a { color: var(--secondary); text-decoration: none; }
+.hero-links a:hover { text-decoration: underline; }
+@media (max-width: 720px) {
+  .hero-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hud-actions a:nth-child(2) { display: none; }
+}
+@media (max-width: 480px) {
+  .hud-actions { gap: 0.4rem; }
+  .hud-actions a { padding: 0.3rem 0.6rem; }
+  .hud-actions a:nth-child(4) { display: none; } /* Contact: still in the hero links and at the end of the page */
+  .hero-kicker { letter-spacing: 0.16em; margin-top: 2.4rem; }
+  .hero-feature { padding: 0.9rem 0.8rem 0.8rem; }
+}
+.card-link.case { margin-right: 1.2rem; font-weight: 600; }

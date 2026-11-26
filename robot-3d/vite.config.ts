@@ -10,6 +10,8 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         viewer: resolve(__dirname, 'viewer.html'),
+        k1: resolve(__dirname, 'k1.html'),
+        projects: resolve(__dirname, 'projects.html'),
       },
     },
     chunkSizeWarningLimit: 1200,

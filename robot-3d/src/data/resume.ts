@@ -32,7 +32,7 @@ export const recordSections: RecordSectionData[] = [
             lines: [
               'Built a local-first voice assistant on embedded Linux and Apple Silicon: Whisper STT, LLM routing through Ollama with cloud fallback, Coqui TTS, a FastAPI service layer, and an Electron client. Ran MLX LoRA fine-tuning to adapt the local model’s response behavior.',
               'Diagnosed and fixed audio-pipeline timing failures, device interface faults, and I2C/UART peripheral errors that were dropping utterances mid-stream, taking capture from intermittent to reliable end to end.',
-              'Shipped a Python and Flask trading service on the Interactive Brokers REST API: a five-indicator weighted signal engine (RSI, MACD, Bollinger Bands, moving averages, ATR), automated stop-loss, take-profit and trailing-stop risk logic, and a live position and P&L dashboard.',
+              'Built a production Python and Flask algorithmic trading system from scratch on the Interactive Brokers REST API: a five-indicator weighted signal engine (RSI, MACD, Bollinger Bands, moving averages, ATR), automated stop-loss, take-profit and trailing-stop risk logic, and a live position and P&L dashboard.',
             ],
           },
           {
@@ -40,7 +40,8 @@ export const recordSections: RecordSectionData[] = [
             org: 'HealthArk Insights',
             meta: 'May 2025 · August 2025 · Mumbai, India',
             lines: [
-              'Python document-processing features: summarization, web scraping, and dynamic formatting tools built to client specifications. Requirements gathered and validated with clients directly. Shipped to production.',
+              'Shipped three production Python features to a client-facing document platform (summarization, web scraping, dynamic formatting), holding 92% extraction accuracy across the document simplification pipeline.',
+              'Gathered and validated requirements directly with clients, taking each feature from specification through production release.',
             ],
           },
         ],
@@ -130,7 +131,7 @@ export const recordSections: RecordSectionData[] = [
             org: 'University of Illinois at Urbana-Champaign',
             meta: 'August 2023 · expected May 2027',
             lines: [
-              'Coursework: ECE 470 Robotics · ECE 486 Control Systems · ECE 484 Principles of Safe Autonomy · ECE 391 Operating Systems · ECE 494 Deep Learning for Computer Vision.',
+              'Coursework: Robot Dynamics and Control · ECE 470 Introduction to Robotics · ECE 486 Control Systems · ECE 484 Principles of Safe Autonomy · ECE 494 Deep Learning for Computer Vision · Algorithms and Models of Computation · ECE 391 Operating Systems · ECE 385 Digital Systems Laboratory.',
             ],
           },
         ],
