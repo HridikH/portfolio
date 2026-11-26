@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Engineering Notes: Hridik Hingorani</title>
+  <meta name="description" content="Technical write-ups: real-time impedance control on a CRS arm, a ROS 2 autonomy stack for a Polaris GEM, UR3 kinematics and drawing, underactuated balance control, and ECE 445 smart glasses." />
+  <link rel="stylesheet" crossorigin href="/assets/case-zraQNR5v.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="name" href="/">HRIDIK HINGORANI</a>
+    <nav aria-label="Site">
+      <a href="/k1.html">K1 case study</a>
+      <a href="/projects.html" aria-current="page">Engineering notes</a>
+      <a href="/media/Hridik_Hingorani_Resume.pdf">Resume</a>
+      <a href="https://github.com/HridikH">GitHub</a>
+      <a href="mailto:hridikh2@illinois.edu">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <p class="kicker">Engineering notes</p>
+  <h1>Robotics and control projects, with the math and the evidence</h1>
+  <p class="lede">Each entry starts with a short summary and then the detail: equations, implementation, what was tested
+    on hardware versus in simulation, and links to code or footage. The flagship project, humanoid push recovery on the
+    Booster K1, has <a href="/k1.html">its own case study</a>.</p>
+
+  <nav aria-label="Projects">
+    <ol class="toc">
+      <li><a href="#crs">Real-time task-space impedance control, CRS arm</a></li>
+      <li><a href="#gem">Autonomous driving stack, Polaris GEM</a></li>
+      <li><a href="#ur3">UR3 kinematics and robotic drawing</a></li>
+      <li><a href="#balance">Underactuated balance control</a></li>
+      <li><a href="#glasses">AI smart glasses (ECE 445)</a></li>
+      <li><a href="#skills">Technical skills</a></li>
+    </ol>
+  </nav>
+
+  <!-- CRS -->
+  <section class="proj" id="crs">
+    <h2>Real-Time Task-Space Impedance Control, CRS Arm <span class="tag done">hardware</span></h2>
+    <p class="proj-meta">Bare-metal C · TI C2000 TMS320F28335 · 3-joint CRS arm · Spring 2026 (ME 446)</p>
+    <p>A 1 kHz impedance controller in C that makes a 3-joint arm behave like a programmable spring and damper in Cartesian
+      space, with stiffness that changes per waypoint. Validated on the arm with peg-in-hole insertion and compliant
+      contour following along a zig-zag path.</p>
+    <div class="two">
+      <div>
+        <h3>Control law</h3>
+<pre class="eq">x, ẋ   = f(q), J(q) q̇                  forward kinematics
+F      = Kp (x_d − x) + Kd (ẋ_d − ẋ)       Kp, Kd diagonal, set per waypoint
+τ      = J(q)ᵀ F + τ_fric(q̇)
+τ_fric = b ⊙ q̇ + c ⊙ sign(q̇)             viscous + Coulomb, per joint
+τ_i    = clamp(τ_i, −5, +5) N·m</pre>
+        <p class="small">Each waypoint carries its own stiffness mode. Making some Cartesian axes soft and others stiff gives
+          selective compliance: the arm yields where contact is expected and holds position elsewhere.</p>
+      </div>
+      <figure class="vids" style="display:block">
+        <video class="wide" src="/media/crs-arm.mp4" poster="/media/crs-arm-poster.jpg" controls muted playsinline preload="none" aria-label="CRS arm performing compliant peg insertion and contour following"></video>
+        <figcaption>On the arm: peg insertion and contour following. A scale on the fixture is used to check contact force.</figcaption>
+      </figure>
+    </div>
+    <h3>Engineering details</h3>
+    <ul>
+      <li>Joint velocity from finite-differenced encoder angles through a 3-sample moving average, inside the 1 ms loop.</li>
+      <li>Normal force against a surface is open-loop: commanded through an estimated contact stiffness (no force sensor), and checked against a physical scale.</li>
+      <li>Debugged actuator saturation, loop-timing overruns and near-singular configurations on an oscilloscope.</li>
+    </ul>
+    <p class="small muted">Code is course lab work and is not public (available on request). No logged trajectory plots are published yet.</p>
+  </section>
+
+  <!-- GEM -->
+  <section class="proj" id="gem">
+    <h2>Autonomous Driving Stack, Polaris GEM e4 <span class="tag prog">in progress</span></h2>
+    <p class="proj-meta">Python · C++ · ROS 2 · OpenCV · four-person team, ECE 484 · Oct 2026 to present</p>
+    <p>A ROS 2 autonomy stack for a full-scale Ackermann-steered electric vehicle: follow the lane along a recorded route,
+      stop for signs, pedestrians and obstacles, resume, and stop at the goal. I own dynamics, controls and testing.</p>
+    <div class="note"><strong>Status, stated precisely.</strong> On the vehicle: camera-based lane keeping on straights and
+      through turns. In simulation: full laps in our track simulator. Not yet demonstrated on the vehicle: live sign,
+      pedestrian and obstacle stops and start-to-goal runs (scheduled for the December 11 demo).</div>
+    <div class="two">
+      <div>
+        <h3>My part: control and test tooling</h3>
+        <ul>
+          <li>Path tracking: Pure Pursuit with speed-scaled lookahead, and Stanley as a comparison.</li>
+          <li>Curvature-based corner-speed planner with braking-distance deceleration into stops.</li>
+          <li>Speed PID on throttle and brake; waypoint progression along the route.</li>
+          <li>Command limiter: steering angle, steering rate and acceleration clamped before the PACMod drive-by-wire.</li>
+          <li>Test loop: a track simulator and a Gazebo world built from ROS bags and the RTK route recorded on the car; vehicle calibration (camera tilt, sensor offsets, wheelbase, lane width) from recorded bags.</li>
+        </ul>
+        <h3>Built with the team</h3>
+        <p class="small">Bird's-eye lane fit (primary steering reference, GNSS/INS waypoints as fallback), YOLO11n stop-sign and
+          pedestrian detection, LiDAR corridor obstacle detection, and the DRIVE / STOP-SIGN HOLD / OBSTACLE HOLD / GOAL state machine.</p>
+      </div>
+      <div>
+        <h3>Path tracking</h3>
+<pre class="eq">Pure Pursuit (rear axle, wheelbase L, lookahead l_d growing with speed):
+  δ = atan( 2 L sin α / l_d )
+Stanley (front axle, cross-track e, heading error ψ_e):
+  δ = ψ_e + atan( k e / (k_s + v) )
+Speed: u = Kp e_v + Ki ∫e_v + Kd ė_v  → throttle / brake
+Limits: |δ| ≤ δ_max, |δ̇| ≤ δ̇_max, |a| ≤ a_max</pre>
+        <figure class="vids" style="display:block">
+          <video class="wide" src="/media/gem-ev4.mp4" poster="/media/gem-ev4-poster.jpg" controls muted playsinline preload="none" aria-label="Polaris GEM lane keeping on the test track"></video>
+          <figcaption>Lane keeping on the vehicle from the front camera.</figcaption>
+        </figure>
+      </div>
+    </div>
+    <p><a class="btn" href="https://safeautonomy-illinois-students.github.io/fa26_ece484_final_project_site_team_GEMstones/">Project site and videos</a>
+      <span class="small muted">Code lives in the course organization and is private.</span></p>
+  </section>
+
+  <!-- UR3 -->
+  <section class="proj" id="ur3">
+    <h2>UR3 Kinematics and Robotic Drawing <span class="tag done">hardware</span></h2>
+    <p class="proj-meta">Python · ROS · OpenCV · ECE 470 · Jan to May 2026</p>
+    <p>Give the arm an image; it extracts contours, maps them to a 20 cm square on the table, and draws them with a pen on a
+      physical 6-DOF UR3, using inverse kinematics solved in closed form. Classical vision and analytic motion planning,
+      no learning. Drew a 142-stroke test image in 7 minutes on hardware.</p>
+    <div class="two">
+      <div>
+        <h3>Kinematics</h3>
+<pre class="eq">Forward (product of exponentials):
+  T(θ) = e^[S1]θ1 e^[S2]θ2 ··· e^[S6]θ6 M,   S_i = (ω_i, −ω_i × q_i)
+Inverse (closed form, elbow-up):
+  wrist centre from the pen tip and yaw
+  θ1 from base geometry, arcsin correction for the shoulder offset
+  θ2, θ3 from the two-link triangle (law of cosines)
+  θ4 keeps the tool vertical,  θ5 = −90°,  θ6 from yaw
+  check: T(θ) recomputed by FK before sending</pre>
+      </div>
+      <div>
+        <h3>Vision to motion</h3>
+<pre class="eq">image → grayscale + Gaussian blur → Canny (50, 150)
+      → findContours + approxPolyDP (0.2% of arc length)
+      → drop strokes &lt; 50 px → pixels to metres (20 cm square)
+per stroke: pen-up MoveJ to start, pen-down MoveL through
+            every waypoint, pen-up at the end</pre>
+        <p class="small">Joint targets go out on <code>ur3/command</code>. The program waits until every joint's
+          feedback on <code>ur3/position</code> is within <strong>0.0005 rad</strong> of its target before sending the
+          next waypoint: that number is the per-joint arrival threshold in the code, not a separately measured tracking error.</p>
+      </div>
+    </div>
+    <div class="vids">
+      <figure><video class="wide" src="/media/ur3.mp4" poster="/media/ur3-poster.jpg" controls muted playsinline preload="none" aria-label="UR3 drawing an image with a pen"></video>
+        <figcaption>UR3 drawing on hardware.</figcaption></figure>
+    </div>
+    <p><a class="btn" href="https://github.com/HridikH/ur3-image-drawing">Source code</a>
+      <span class="small muted">The repository README lists the known limitations as they ran on hardware.</span></p>
+  </section>
+
+  <!-- Balance -->
+  <section class="proj" id="balance">
+    <h2>Underactuated Balance Control</h2>
+    <p class="proj-meta">MATLAB · Simulink · Rust · Jan 2025 to Jun 2026</p>
+    <h3>Reaction-wheel inverted pendulum <span class="tag done">hardware</span></h3>
+    <div class="two">
+      <div>
+        <p>Pole-placement state feedback with a Luenberger observer, built as two decoupled 2-state blocks and
+          gain-scheduled between the upright and hanging linearizations. Friction parameters identified from logged
+          step-response data. Measured settling time 1.1 s on the rig.</p>
+<pre class="eq">ẋ = A_s x + B_s u,  y = C x        s ∈ {upright, hanging}
+u = −K_s x̂,   eig(A_s − B_s K_s) at the chosen poles
+x̂̇ = A_s x̂ + B_s u + L_s (y − C x̂),   observer poles faster
+switch (A_s, B_s, K_s, L_s) by pendulum angle</pre>
+      </div>
+      <figure class="vids" style="display:block">
+        <video class="wide" src="/media/pendulum.mp4" poster="/media/pendulum-poster.jpg" controls muted playsinline preload="none" aria-label="Inverted pendulum rig balancing"></video>
+        <figcaption>The lab rig balancing under state feedback.</figcaption>
+      </figure>
+    </div>
+    <h3>Cart-pole control simulator <span class="tag sim">simulation</span></h3>
+    <p>A Rust simulator of the full nonlinear cart-pole (Lagrangian equations of motion, RK4 at 1 kHz with zero-order hold
+      on the control) with a from-scratch LQR: numerical linearization about upright, discretization, and the discrete
+      Riccati equation solved by fixed-point iteration. Compared against PID on pole angle.</p>
+<pre class="eq">P ← Q + Aᵀ P A − Aᵀ P B (R + Bᵀ P B)⁻¹ Bᵀ P A      (iterate to convergence)
+K = (R + Bᵀ P B)⁻¹ Bᵀ P A,    u = −K x,   |u| ≤ 25 N</pre>
+    <div class="tw"><table>
+      <caption>8 s runs from θ₀ = 0.15 rad (simulation; numbers from the repository README)</caption>
+      <thead><tr><th>Controller</th><th>Gains</th><th class="n">Settling</th><th class="n">Overshoot</th><th class="n">Peak force</th><th class="n">Final cart position</th></tr></thead>
+      <tbody>
+        <tr><td>PID underdamped</td><td>Kp 25, Ki 0, Kd 1</td><td class="n">5.1 s</td><td class="n">60%</td><td class="n">3.8 N</td><td class="n">1.02 m</td></tr>
+        <tr><td>PID overdamped</td><td>Kp 30, Ki 0, Kd 15</td><td class="n">2.9 s</td><td class="n">0%</td><td class="n">4.5 N</td><td class="n">8.49 m</td></tr>
+        <tr><td>PID aggressive</td><td>Kp 120, Ki 5, Kd 12</td><td class="n">0.5 s</td><td class="n">5%</td><td class="n">18.0 N</td><td class="n">1.23 m</td></tr>
+        <tr><td>LQR gentle</td><td>Q diag(1,1,10,1), R 1</td><td class="n">5.5 s</td><td class="n">33%</td><td class="n">4.8 N</td><td class="n">0.00 m</td></tr>
+        <tr><td>LQR balanced</td><td>Q diag(10,1,100,1), R 0.1</td><td class="n">3.2 s</td><td class="n">40%</td><td class="n">11.7 N</td><td class="n">0.00 m</td></tr>
+        <tr><td>LQR aggressive</td><td>Q diag(100,10,1000,10), R 0.01</td><td class="n">2.8 s</td><td class="n">30%</td><td class="n">25.0 N</td><td class="n">0.00 m</td></tr>
+      </tbody>
+    </table></div>
+    <p class="small">The angle-only PID cannot hold the cart: the overdamped preset settles the pole and lets the cart drift 8.5 m.
+      Every LQR preset returns the cart to zero because cart position is in the cost.</p>
+    <p><a class="btn" href="https://github.com/HridikH/cart-pole-control">Cart-pole source and plots</a>
+      <span class="small muted">The pendulum code is course lab work and is not public.</span></p>
+  </section>
+
+  <!-- Glasses -->
+  <section class="proj" id="glasses">
+    <h2>AI Smart Glasses for Hands-Free Datasheet Retrieval <span class="tag prog">ongoing</span></h2>
+    <p class="proj-meta">C · ESP-IDF · ESP32-S3 · OV5640 · custom PCB · ECE 445 senior design, three-person team · Sep 2026 to present</p>
+    <p>An end-to-end embedded AI wearable: look at an electronic component, press a button, and the glasses identify it and
+      display its datasheet in about 1 s. Built on a custom ESP32-S3 board with an OV5640 camera, designed from scratch
+      with no development boards.</p>
+    <div class="two">
+      <div>
+        <h3>My part: embedded firmware</h3>
+        <ul>
+          <li>Camera capture over the OV5640's 8-bit DVP interface, with autofocus (1.5 s focus deadline) and work lights during exposure.</li>
+          <li>Communication: Wi-Fi upload to the vision server with a shared token, buffer-until-ACK, timeouts and retries.</li>
+          <li>Button debounce, status LED, battery monitoring, and timestamped event logs per transaction.</li>
+          <li>Integration with the team's computer vision and object-tracking pipeline, which identifies the component and returns its datasheet.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Data flow</h3>
+<pre class="eq">button → autofocus → OV5640 JPEG capture (ESP32-S3)
+       → Wi-Fi upload (token, ACK, retry)
+       → vision server: detect + track component → identify part
+       → datasheet lookup → shown to the wearer      ≈ 1 s</pre>
+      </div>
+    </div>
+    <p class="small muted">PCB renders and board photos will be added here.</p>
+  </section>
+
+  <section class="proj" id="skills">
+    <h2>Technical skills</h2>
+    <div class="tw"><table>
+      <tbody>
+        <tr><th>Learning and simulation</th><td>PPO, reward design, curriculum learning, domain randomization, policy evaluation, sim-to-real; PyTorch, NumPy, MuJoCo (mjlab), Gazebo; Slurm on NCSA Delta, Weights &amp; Biases</td></tr>
+        <tr><th>Control</th><td>impedance control, PD/PID, LQR, pole placement, state observers, Pure Pursuit, Stanley, friction compensation, gain scheduling</td></tr>
+        <tr><th>Dynamics and kinematics</th><td>Jacobian-transpose control, product of exponentials, analytic IK, system identification</td></tr>
+        <tr><th>Robotics and embedded</th><td>ROS / ROS 2, OpenCV, TI C2000, ESP32-S3 (ESP-IDF), bare-metal firmware, I2C, UART, ADC, PWM, KiCad</td></tr>
+        <tr><th>Languages and tools</th><td>Python, C, C++, MATLAB/Simulink, Rust, SystemVerilog; Linux, Git, GDB, QEMU</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+</main>
+
+<footer>
+  <a href="/">Home</a><a href="/k1.html">K1 case study</a><a href="/media/Hridik_Hingorani_Resume.pdf">Resume</a><a href="https://github.com/HridikH">GitHub</a><a href="https://www.linkedin.com/in/HridikH">LinkedIn</a><a href="mailto:hridikh2@illinois.edu">hridikh2@illinois.edu</a>
+</footer>
+</body>
+</html>
